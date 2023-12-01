@@ -1,0 +1,13 @@
+.page_wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary);
+  }
+  @media (min-width: 320px) and (max-width: 786px) {
+    .page_wrapper {
+      font-size: 0.8rem;
+    }
+  }
+  

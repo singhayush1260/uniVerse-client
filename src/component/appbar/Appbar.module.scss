@@ -1,0 +1,111 @@
+.appbar {
+  width: 100%;
+  padding: 1rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+  position: sticky;
+  top: 0;
+  //box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  z-index: 999;
+  .logo_and_search {
+    display: flex;
+    gap: 10px;
+    input {
+      border-radius: 10px;
+      padding-left: 10px;
+      background-color: var(--color-secondary);
+      color: var(--color-text-primary);
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    }
+  }
+  nav {
+    margin-right: 70px;
+    display: flex;
+    gap: 3rem;
+    font-size: 1.3rem;
+    .current_nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: var(--color-button-primary);
+      &::after {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: var(--color-button-primary);
+      }
+    }
+  }
+  .user_menu {
+    padding: 0.3rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    background-color: var(--color-secondary);
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    img {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+    }
+    .dropdown_menu {
+      padding: 0.5rem 1rem;
+      position: absolute;
+      top: 35px;
+      right: 50%;
+      transform: translateX(50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--color-primary);
+      border-radius: 10px;
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+      button {
+        width: 100%;
+        padding: 5px;
+        background-color: var(--color-secondary);
+        color: var(--color-text-primary);
+      }
+    }
+  }
+}
+@media (min-width: 320px) and (max-width: 520px) {
+  .appbar {
+    padding: 1rem 1rem;
+    gap: 20px;
+    .logo_and_search {
+      display: none;
+    }
+    nav {
+      margin-right: 0;
+      gap: 2rem;
+    }
+    .user_menu {
+      padding: 2px 5px;
+      span {
+        display: none;
+      }
+    }
+  }
+}
+@media (min-width: 520px) and (max-width: 820px) {
+  .appbar {
+    .logo_and_search {
+      input{
+        display: none;
+      }
+    }
+    nav {
+      margin-right: 0;
+    }
+  }
+}
