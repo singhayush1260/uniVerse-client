@@ -6,6 +6,7 @@ import { CiLight, CiDark } from "react-icons/ci";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import useLogin from '../../hooks/auth/useLogin';
 const Appbar = () => {
 
    const [showDropdown, setShowDropdown] = useState(false);
@@ -15,6 +16,8 @@ const Appbar = () => {
    
    const dispatch=useDispatch();
    const {isDarkTheme}=useSelector((state)=>state.themeReducer);
+
+   const {logout} =useLogin();
 
    return <div className={classes.appbar}>
       <div className={classes.logo_and_search}>
@@ -40,7 +43,7 @@ const Appbar = () => {
             <Link to="/user/as2">Profile</Link>
             
             <button onClick={()=>dispatch({type:'toggleTheme'})}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>
-            <button onClick={()=>dispatch({type:'logout'})}>Logout <IoIosLogOut /> </button>
+            <button onClick={()=>logout()}>Logout <IoIosLogOut /> </button>
          </div>}
       </div>
 
