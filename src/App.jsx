@@ -9,15 +9,21 @@ import Likes from "./pages/likes/Likes";
 import Notification from "./pages/notification/Notification";
 import Profile from "./pages/profile/Profile";
 import Setting from "./pages/setting/Setting";
+import { ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 const App = () => {
-  const { userData } = useSelector((state) => state.userReducer);
+  const { isLoggedIn } = useSelector((state) => state.userReducer);
 
   const ProtectedRoute = ({ element, ...rest }) => {
-    return userData ? element : <Navigate to="/login" />;
+    return isLoggedIn ? element : <Navigate to="/login" />;
   };
+
+ 
 
   return (
     <ThemeProvider>
+       <ToastContainer/>
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />

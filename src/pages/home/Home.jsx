@@ -5,14 +5,13 @@ import Stories from "../../component/widgets/stories/Stories";
 import Posts from "../../component/posts/Posts";
 import classes from "./Home.module.scss";
 import Appbar from "../../component/appbar/Appbar";
-import { motion } from "framer-motion";
+import { dashboardApi } from "../../api/auth";
 const Home = () => {
+ // dashboardApi();
   return (
     <>
       <Appbar />
-      <motion.main className={classes.page_wrapper}
-   
->
+      <main className={classes.page_wrapper}>
         <div className={classes.left_sidebar}>
           <ProfileOverview />
           <MyFriends />
@@ -25,7 +24,7 @@ const Home = () => {
         <div className={classes.right_sidebar}>
           <MyFriends />
         </div>
-      </motion.main>
+      </main>
     </>
   );
 };

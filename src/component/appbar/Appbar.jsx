@@ -6,18 +6,30 @@ import { CiLight, CiDark } from "react-icons/ci";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import useLogin from '../../hooks/auth/useLogin';
+import {useQuery,useMutation} from "react-query";
+import { logout } from '../../api/auth';
 const Appbar = () => {
 
    const [showDropdown, setShowDropdown] = useState(false);
-   const location = useLocation();
    const navigate = useNavigate();
+   const{ refetch, isLoading,isError,error}=useQuery("logout",logout,{
+      enabled:false,
+      onSuccess:()=>{
+           console.log("logout success")
+           navigate("/login");
+           //dispatch({type:'logout'})
+      },
+      onError:()=>{
+  
+      }
+    });
+   const location = useLocation();
+   
    const pathname = location.pathname;
    
    const dispatch=useDispatch();
    const {isDarkTheme}=useSelector((state)=>state.themeReducer);
-
-   const {logout} =useLogin();
+   const {userData}=useSelector((state)=>state.userReducer);
 
    return <div className={classes.appbar}>
       <div className={classes.logo_and_search}>
@@ -35,7 +47,7 @@ const Appbar = () => {
       </nav>
       <div className={classes.user_menu}>
          <img src="https://image.lexica.art/full_jpg/7515495b-982d-44d2-9931-5a8bbbf27532" alt="user" />
-         <span>Evgen Ledo</span>
+         <span>{userData?.Username}</span>
          {!showDropdown && <AiFillCaretDown onClick={() => setShowDropdown(true)} />}
          {showDropdown && <AiFillCaretUp onClick={() => setShowDropdown(false)} />}
          { showDropdown && <div className={classes.dropdown_menu}>
@@ -43,7 +55,7 @@ const Appbar = () => {
             <Link to="/user/as2">Profile</Link>
             
             <button onClick={()=>dispatch({type:'toggleTheme'})}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>
-            <button onClick={()=>logout()}>Logout <IoIosLogOut /> </button>
+            <button onClick={()=>refetch()}>Logout <IoIosLogOut /> </button>
          </div>}
       </div>
 

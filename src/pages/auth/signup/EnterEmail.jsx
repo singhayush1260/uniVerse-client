@@ -1,40 +1,54 @@
 import classes from "../AuthPage.module.scss";
-import { Link } from "react-router-dom";
-import { CiMail } from "react-icons/ci";
-import { GrLinkNext } from "react-icons/gr";
-import { motion } from "framer-motion";
 import { useFormik } from "formik";
-import { enterEmailSchema } from "./signup_schema";
-import useSignup from "../../../hooks/auth/useSignup";
-const EnterEmail = ({ next}) => {
-
-  const{requestOTP}=useSignup();
+import { motion } from "framer-motion";
+import { CiMail } from "react-icons/ci";
+import { email_schema } from "./signup_schema";
+import { getOTP } from "../../../api/auth";
+import { useMutation } from "react-query";
+import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
+import { toast } from "react-toastify";
+const EnterEmail = ({ setStep, setEmail }) => {
+  console.log("fsfsfsdf", setStep);
+  const { mutate, isLoading, isError, error } = useMutation(getOTP, {
+    onSuccess: async () => {
+      // await queryClient.invalidateQueries("validateToken");
+      console.log("otp sent");
+      toast("OTP Sent!", {
+        position: "top-center",
+        theme: "dark",
+        type: "success",
+        autoClose: 3000,
+      });
+      setStep(2);
+    },
+  });
 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
     useFormik({
       initialValues: { Email: "" },
-      validationSchema: enterEmailSchema,
+      validationSchema: email_schema,
       onSubmit: async (values) => {
         const { Email } = values;
         console.log(Email);
-        //setEmail(Email);
-        requestOTP(Email);
-        next(2);
+        setEmail(Email);
+        mutate(Email);
       },
     });
 
   return (
-    <motion.div
-      className={classes.form_container}
-      initial={{ x: "-300px" }}
+    <motion.form
+      onSubmit={(e) => handleSubmit(e)}
+      initial={{ x: "-500px" }}
       animate={{ x: "-5px" }}
       exit={{ x: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2>Enter your email</h2>
-      <p>Join your community now</p>
-      <form onSubmit={handleSubmit}>
-        <div className={`${classes.form_group}  ${errors.Email && touched.Email ? classes.input_error : ""}`}>
+      <div>
+        <div
+          className={`${classes.field_group_one}  ${
+            errors.Email && touched.Email ? classes.field_group__warning : ""
+          }`}
+        >
           <div className={classes.input_controller}>
             <CiMail />
             <input
@@ -48,17 +62,14 @@ const EnterEmail = ({ next}) => {
           </div>
           {errors.Email && touched.Email && <p>{errors.Email}</p>}
         </div>
-        <div className={classes.button_container}>
-          <button>
-            Next <GrLinkNext />
+        {isError && <p style={{ color: "red" }}>{error?.message}</p>}
+        <div className={classes.field_group_one}>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? <CircularLoader borderColor={"black"} /> : "Continue"}
           </button>
         </div>
-      </form>
-      <div className={classes.link_group}>
-        Already have an account?
-        <Link to="/login">Login</Link>
       </div>
-    </motion.div>
+    </motion.form>
   );
 };
 export default EnterEmail;

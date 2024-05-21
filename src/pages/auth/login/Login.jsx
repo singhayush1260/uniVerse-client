@@ -5,9 +5,25 @@ import { Link } from "react-router-dom";
 import { CiMail, CiLock } from "react-icons/ci";
 import { BiHide, BiShow } from "react-icons/bi";
 import { login_schema } from "./login_schema";
-import { motion } from "framer-motion";
+import {useMutation} from "react-query";
+import { login } from "../../../api/auth";
+import { useSelector,useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const navigate=useNavigate();
+  const{mutate,isLoading,isError,error}=useMutation(login,{
+    onSuccess:(user)=>{
+      console.log("siccess",user)
+      dispatch({type:"setUser",payload:user})
+      navigate("/")
+    },
+    onError:()=>{
+
+    }
+  });
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
   useFormik({
     initialValues: { Email: "", Password: "" },
@@ -15,20 +31,17 @@ const Login = () => {
     onSubmit: async (values) => {
       const { Email, Password } = values;
       console.log(Email, Password)
-      
+      mutate({Email,Password});
     },
   });
+  console.log("errrrrrrs",error?.message)
   return (
     <main className={classes.page_wrapper}>
-      <motion.div className={classes.form_container}  
-      initial={{ x: "-300px" }}
-      animate={{ x: "-5px" }}
-        exit={{ x: 0 }}
-        transition={{ duration: 0.5 }}>
-        <h2>Log in to your account</h2>
+      <div className={classes.form_container}>
+        <h1>Log in to your account</h1>
         <p>Welcome back!</p>
         <form onSubmit={handleSubmit}>
-          <div className={`${classes.form_group}  ${errors.Email && touched.Email ? classes.input_error : ""}`}>
+          <div className={`${classes.field_group_one}  ${errors.Email && touched.Email ? classes.field_group__warning : ""}`}>
             <div className={classes.input_controller}>
               <CiMail />
               <input type="text"
@@ -41,7 +54,7 @@ const Login = () => {
             </div>
             {errors.Email && touched.Email && <p>{errors.Email}</p>}
           </div>
-          <div className={`${classes.form_group}  ${errors.Password && touched.Password ? classes.input_error : ""}`}>
+          <div className={`${classes.field_group_one}  ${errors.Password && touched.Password ? classes.field_group__warning : ""}`}>
             <div className={classes.input_controller}>
               <CiLock />
               <input  type={showPassword ? "text" : "password"}
@@ -56,22 +69,26 @@ const Login = () => {
             </div>
             {errors.Password && touched.Password && <p>{errors.Password}</p>}
           </div>
-          <div className={classes.form_group_two}>
+          <div className={classes.field_group_two}>
             <div className={classes.input_controller}>
               <input type="checkbox" />
               <span>Remmember me</span>
             </div>
             <Link to="#">Forgot password?</Link>
           </div>
-          <div className={classes.button_container}>
-            <button>Login</button>
+          { isError && <p style={{color:"red"}}>{error?.message}</p>}
+          <div className={classes.field_group_one}>
+            <button type="submit" disabled={isLoading}>{isLoading ? <CircularLoader borderColor={"black"}/> :"Login"}</button>
+            
           </div>
         </form>
-        <div className={classes.link_group}>
+        <div className={classes.link}>
+          <p>
             Don't have an account?
+            </p>
             <Link to="/signup">Sign Up</Link>
           </div>
-      </motion.div>
+      </div>
       {/* <div className={classes.graphics_container}>
         .
       </div> */}
