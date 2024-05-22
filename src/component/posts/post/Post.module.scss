@@ -11,6 +11,30 @@
   .post_header {
     display: flex;
     justify-content: space-between;
+    position: relative;
+    .dropdown{
+      position: absolute;
+      right:10px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--color-primary);
+      border-radius: 10px;
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+      font-size: 0.8rem;
+      span{
+        cursor: pointer;
+        padding: 0.2rem 0.7rem;
+        border-radius: 5px;
+        background-color: var(--color-secondary);
+        color: var(--color-text-primary);
+        &:hover{
+          transform: scale(0.98);
+        }
+      }
+    }
     .user_detail {
       display: flex;
       gap: 0.8em;
@@ -57,6 +81,7 @@
     }
    }
   }
+  
   .post_control {
     display: flex;
     justify-content: space-between;
@@ -69,12 +94,16 @@
         color: red;
       }
     }
-    button {
-      padding: 2px 5px;
-      background-color: var(--color-primary);
-        color: var(--color-button-primary);
-        border: 1px solid var(--color-button-primary);
-    }
+ .button_group{
+  display: flex;
+  gap:10px;
+  button {
+    padding: 2px 5px;
+    background-color: var(--color-primary);
+      color: var(--color-button-primary);
+      border: 1px solid var(--color-button-primary);
+  }
+ }
   }
   .add_comment {
     width: 100%;
@@ -114,6 +143,14 @@
         color: var(--color-button-primary);
       }
     }
+  }
+  .update_caption{
+    background-color: var(--color-primary);
+    color: white;
+    border-radius: 5px;
+    border: var(--color-primary);
+    padding: 1rem;
+    resize: none;
   }
 }
 @media (min-width: 320px) and (max-width: 520px) {

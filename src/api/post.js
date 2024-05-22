@@ -38,72 +38,47 @@ export const createPost=async({caption,attachments})=>{
     console.log("signup response",body);
     return body;
   }
-  export const verifyOTP=async(email,otp)=>{
-    console.log("verify otp",otp);
-    const response = await fetch(`${API_BASE_URL}/api/auth/signup/email`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({email,otp}),
+
+  export const deletePost=async(postId)=>{
+    console.log("delete post data from api",postId);
+    const response = await fetch(`${API_BASE_URL}/api/post/${postId}`, {
+        method: "DELETE", 
+        credentials: "include", 
       });
-    
       const body = await response.json();
       if (!response.ok) {
-        console.log("response not okay",body)
+        console.log("delete post response not okay",body)
         throw new Error(body.message);
       }
-      console.log("verify otp response",body);
+      console.log("delete response",body);
       return body;
     }
 
-    export const createUser=async({username,email,password})=>{
-      console.log("create account",username,email,password);
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup/createuser`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({username,email,password}),
+    export const updatePost=async({postId,updatedCaption})=>{
+      console.log("update post data from api",postId,updatedCaption);
+      const response = await fetch(`${API_BASE_URL}/api/post/${postId}`, {
+          method: "PATCH", 
+          credentials: "include", 
+          headers: { 
+            "Content-Type": "application/json", 
+          }, 
+          body: JSON.stringify({caption:updatedCaption}),
         });
-      
         const body = await response.json();
         if (!response.ok) {
-          console.log("response not okay",body)
+          console.log("update post response not okay",body)
           throw new Error(body.message);
         }
-        console.log("create user response",body);
+        console.log("update post response",body);
         return body;
       }
-
-export const login=async(data)=>{
-console.log("login data from api",data);
-const{Email:username,Password:password}=data;
-const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({username,password}),
-  });
-
-  const body = await response.json();
-  if (!response.ok) {
-    throw new Error(body.message);
-  }
-  console.log("login response",body);
-  return body;
-}
-
-export const logout = async () => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
-      credentials: "include",
-    });
   
-    if (!response.ok) {
-      throw new Error("Error during sign out");
-    }
+export const getAllPosts = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/post/community`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error getting  all posts");
+  }
+  return response.json();
 };

@@ -17,7 +17,7 @@ const Home = () => {
           <MyFriends />
         </div>
         <div className={classes.timeline}>
-          <Stories />
+          {/* <Stories /> */}
           <AddPost />
           <Posts />
         </div>

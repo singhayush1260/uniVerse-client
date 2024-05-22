@@ -43,13 +43,11 @@
     .image_container {
       margin-top: 1rem;
       width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+      display: flex;
+     
       gap:1rem;
     div{
       position: relative;
-      background-color: rebeccapurple;
       span{
         position: absolute;
         width: 1rem;
