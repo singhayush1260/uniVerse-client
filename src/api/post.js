@@ -72,7 +72,19 @@ export const createPost=async({caption,attachments})=>{
         console.log("update post response",body);
         return body;
       }
-  
+
+      export const getAllPostsByUser = async (userId) => {
+        console.log("getAllPostByUser",userId)
+        const response = await fetch(`${API_BASE_URL}/api/post?${userId}`, {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("Error getting  all posts by user");
+        }
+        return response.json();
+      };      
+
+
 export const getAllPosts = async () => {
   const response = await fetch(`${API_BASE_URL}/api/post/community`, {
     credentials: "include",

@@ -9,7 +9,7 @@ import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 const EnterOTP = ({ setStep, email }) => {
-  const [time, setTime] = useState(5);
+  const [time, setTime] = useState(60);
 
   const { mutate, isLoading, isError, error } = useMutation(verifyOTP, {
     onSuccess: async () => {

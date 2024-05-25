@@ -1,40 +1,40 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import Home from "./pages/home/Home";
-import Messenger from "./pages/messenger/Messenger";
-import ThemeProvider from "./component/theme-provider/ThemeProvider";
-import Signup from "./pages/auth/signup/Signup";
-import Login from "./pages/auth/login/Login";
-import Likes from "./pages/likes/Likes";
-import Notification from "./pages/notification/Notification";
-import Profile from "./pages/profile/Profile";
-import Setting from "./pages/setting/Setting";
 import { ToastContainer } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
+import ThemeProvider from "./component/theme-provider/ThemeProvider";
+import { useAuthContext } from "./context/AuthContext";
+
+const Home = lazy(() => import("./pages/home/Home"));
+const Messenger = lazy(() => import("./pages/messenger/Messenger"));
+const Signup = lazy(() => import("./pages/auth/signup/Signup"));
+const Login = lazy(() => import("./pages/auth/login/Login"));
+const Likes = lazy(() => import("./pages/likes/Likes"));
+const Notification = lazy(() => import("./pages/notification/Notification"));
+const Profile = lazy(() => import("./pages/profile/Profile"));
+const Setting = lazy(() => import("./pages/setting/Setting"));
+
+import SuspenseFallback from "./component/loaders/suspense-fallback/SuspenseFallback";
 
 const App = () => {
-  const { isLoggedIn } = useSelector((state) => state.userReducer);
-
-  const ProtectedRoute = ({ element, ...rest }) => {
-    return isLoggedIn ? element : <Navigate to="/login" />;
-  };
-
- 
-
+  const { isLoggedIn } = useAuthContext();
+  
   return (
-    <ThemeProvider>
-       <ToastContainer/>
-      <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<ProtectedRoute element={<Home />} />} />
-        <Route path="/messenger" element={<ProtectedRoute element={<Messenger />} />} />
-        <Route path="/likes" element={<ProtectedRoute element={<Likes />} />} />
-        <Route path="/notifications" element={<ProtectedRoute element={<Notification />} />} />
-        <Route path="user/:userId" element={<ProtectedRoute element={<Profile />} />} />
-        <Route path="/settings" element={<ProtectedRoute element={<Setting />} />} />
-      </Routes>
-    </ThemeProvider>
+     <>
+      <ToastContainer />
+      <Suspense fallback={<SuspenseFallback/>}>
+        <Routes>
+          <Route path="/" element={isLoggedIn ? <Home /> : <Login />} />
+          <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
+          <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+          <Route path="/messenger" element={isLoggedIn ? <Messenger /> : <Navigate to="/login" />} />
+          <Route path="/likes" element={isLoggedIn ? <Likes /> : <Navigate to="/login" />} />
+          <Route path="/notifications" element={isLoggedIn ? <Notification /> : <Navigate to="/login" />} />
+          <Route path="/user/:userId" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/settings" element={isLoggedIn ? <Setting /> : <Navigate to="/login" />} />
+        </Routes>
+      </Suspense>
+     </>
   );
 };
 

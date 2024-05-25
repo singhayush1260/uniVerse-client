@@ -5,9 +5,7 @@ import Stories from "../../component/widgets/stories/Stories";
 import Posts from "../../component/posts/Posts";
 import classes from "./Home.module.scss";
 import Appbar from "../../component/appbar/Appbar";
-import { dashboardApi } from "../../api/auth";
 const Home = () => {
- // dashboardApi();
   return (
     <>
       <Appbar />

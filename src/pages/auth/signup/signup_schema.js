@@ -14,6 +14,7 @@ export const otp_schema = Yup.object({
 });
 
 export const create_user_schema = Yup.object({
+  Name: Yup.string().min(4).max(25).required('Name cannot be empty'),
   Username: Yup.string().min(4).max(25).required('Username cannot be empty'),
   Password: Yup.string().matches(passwordRegex, 'Password must be at least 8 characters, contain an uppercase, lowercase, digit, symbol').required('Password cannot be empty'),
   ConfirmPassword: Yup.string()

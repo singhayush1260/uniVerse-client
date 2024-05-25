@@ -6,17 +6,23 @@ import { CiLight, CiDark } from "react-icons/ci";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {useQuery,useMutation} from "react-query";
+import {useQuery} from "react-query";
 import { logout } from '../../api/auth';
+import { useQueryClient } from "react-query";
+import CircularLoader from '../loaders/circular-loader/CircularLoader';
+import SearchUser from '../widgets/search-user/SearchUser';
 const Appbar = () => {
-
+  
+   const queryClient=useQueryClient();
    const [showDropdown, setShowDropdown] = useState(false);
    const navigate = useNavigate();
    const{ refetch, isLoading,isError,error}=useQuery("logout",logout,{
       enabled:false,
-      onSuccess:()=>{
+      onSuccess:async()=>{
            console.log("logout success")
            navigate("/login");
+           await queryClient.invalidateQueries("validateToken");
+           queryClient.removeQueries({ queryKey: "validateToken" });
            //dispatch({type:'logout'})
       },
       onError:()=>{
@@ -34,7 +40,8 @@ const Appbar = () => {
    return <div className={classes.appbar}>
       <div className={classes.logo_and_search}>
          <h1>UV</h1>
-         <input type="text" placeholder="Search user.." />
+         {/* <input type="text" placeholder="Search user.." /> */}
+         <SearchUser/>
       </div>
       <nav>
          <span className={pathname === "/" ? classes.current_nav : ""} onClick={() => navigate("/")}> <GoHomeFill /> </span>
@@ -58,7 +65,10 @@ const Appbar = () => {
             <button onClick={()=>refetch()}>Logout <IoIosLogOut /> </button>
          </div>}
       </div>
-
+    {isLoading && <div className={classes.logout_loader}>
+     <CircularLoader/>
+       <p>Logging out</p>
+     </div>}
    </div>
 }
 export default Appbar;

@@ -2,61 +2,77 @@ import classes from "../AuthPage.module.scss";
 import {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import { useMutation,useQueryClient } from "react-query";
+import { motion } from "framer-motion";
 import { CiUser, CiLock } from "react-icons/ci";
 import { BiHide, BiShow } from "react-icons/bi";
 import { create_user_schema } from "./signup_schema";
 import { createUser } from "../../../api/auth";
-import { useMutation } from "react-query";
 import { toast } from 'react-toastify';
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 const CreateUser = ({email}) => {
   const [showPassword, setShowPassword] = useState({password:false, confirmPassword:false});
   const navigate=useNavigate();
-  const {mutate,isLoading,isError,error}=useMutation(createUser,{
-    onSuccess: ()=>{
-       // await queryClient.invalidateQueries("validateToken");
-       console.log("user created");
+  const queryClient=useQueryClient();
+  const {mutate,isLoading}=useMutation(createUser,{
+    onSuccess: async ()=>{
        toast("User created!",{
         position:"top-center",
         theme:"dark",
         type:"success",
         autoClose:3000
        })
-        navigate("/");
-
+       await queryClient.invalidateQueries("validateToken");
+      navigate("/");
     },
     onError:(error)=>{
-      // await queryClient.invalidateQueries("validateToken");
-      console.log("user not created");
       toast(error?.message,{
        position:"top-center",
        theme:"dark",
        type:"error",
        autoClose:3000
       })
-       navigate("/");
-
+      navigate("/");
    },
   }); 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
     useFormik({
-      initialValues: { Username:"",Password: "",ConfirmPassword:"" },
+      initialValues: { Name:"", Username:"",Password: "",ConfirmPassword:"" },
       validationSchema: create_user_schema,
       onSubmit: async (values) => {
         console.log("valuessssss",values)
-        const { Username, Password } = values;
-        console.log(Username, email, Password);
-        mutate({username:Username, email,password:Password});
+        const { Name,Username, Password } = values;
+        console.log(Name,Username, email, Password);
+        mutate({name:Name,username:Username, email,password:Password});
       },
     });
 
 
   return (
-   <form onSubmit={(e)=>handleSubmit(e)}  initial={{ x: "-500px" }}
+   <motion.form onSubmit={(e)=>handleSubmit(e)}  initial={{ x: "-500px" }}
    animate={{ x: "-5px" }}
    exit={{ x: 0 }}
    transition={{ duration: 0.5 }}>
      <div>
+     <div
+        className={`${classes.field_group_one}  ${
+          errors.Name && touched.Name ? classes.field_group__warning : ""
+        }`}
+      >
+        <div className={classes.input_controller}>
+          <CiUser />
+          <input
+            type="text"
+            id="Name"
+            name="Name"
+            placeholder="Name"
+            value={values.Name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+        </div>
+        {errors.Name && touched.Name && <p>{errors.Name}</p>}
+      </div>
       <div
         className={`${classes.field_group_one}  ${
           errors.Username && touched.Username ? classes.field_group__warning : ""
@@ -128,7 +144,7 @@ const CreateUser = ({email}) => {
       <button type="submit" disabled={isLoading}>{isLoading ? <CircularLoader borderColor={"black"}/> :"Create"}</button>
       </div>
     </div>
-   </form>
+   </motion.form>
   );
 };
 export default CreateUser;

@@ -1,24 +1,27 @@
 import classes from "../AuthPage.module.scss";
 import { useState } from "react";
+import { useMutation,useQueryClient } from "react-query";
 import { useFormik } from "formik";
-import { Link } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
+import { Link,useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { CiMail, CiLock } from "react-icons/ci";
 import { BiHide, BiShow } from "react-icons/bi";
 import { login_schema } from "./login_schema";
-import {useMutation} from "react-query";
 import { login } from "../../../api/auth";
-import { useSelector,useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const queryClient=useQueryClient();
   const navigate=useNavigate();
   const{mutate,isLoading,isError,error}=useMutation(login,{
-    onSuccess:(user)=>{
-      console.log("siccess",user)
+    onSuccess:async(user)=>{
+      console.log("logged in success",user);
       dispatch({type:"setUser",payload:user})
       navigate("/")
+      await queryClient.invalidateQueries("validateToken");
     },
     onError:()=>{
 
@@ -34,10 +37,13 @@ const Login = () => {
       mutate({Email,Password});
     },
   });
-  console.log("errrrrrrs",error?.message)
+  //console.log("errrrrrrs",error?.message)
   return (
     <main className={classes.page_wrapper}>
-      <div className={classes.form_container}>
+      <motion.div className={classes.form_container} initial={{ x: "-500px" }}
+   animate={{ x: "-5px" }}
+   exit={{ x: 0 }}
+   transition={{ duration: 0.5 }}>
         <h1>Log in to your account</h1>
         <p>Welcome back!</p>
         <form onSubmit={handleSubmit}>
@@ -88,7 +94,7 @@ const Login = () => {
             </p>
             <Link to="/signup">Sign Up</Link>
           </div>
-      </div>
+      </motion.div>
       {/* <div className={classes.graphics_container}>
         .
       </div> */}

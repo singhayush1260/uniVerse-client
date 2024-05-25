@@ -3,12 +3,15 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LazyImage from '../../lazy-image/LazyImage';
 import AVARAR_FALLBACK from "../../../assets/images/dummy_user.png";
+import useUser from '../../../hooks/useUser';
 const ProfileOverview=()=>{
    
    const {userData}=useSelector((state)=>state.userReducer);
 
-   console.log("userData from profile overview",userData);
-   const{Avatar}=userData;
+   const { user, isLoading, isError }=useUser();
+
+   //console.log("userData from profile overview",user);
+   const Avatar=userData?.Avatar;
 
    const navigate=useNavigate();
 
@@ -19,7 +22,7 @@ const ProfileOverview=()=>{
         </div>
            <div className={classes.profile_pic}>
               {/* <img src={profile_picture} alt="user" /> */}
-              <LazyImage src={Avatar || AVARAR_FALLBACK}/>
+              <LazyImage src={user?.Avatar || AVARAR_FALLBACK}/>
            </div>
         </div>
        <div className={classes.user_detail}>
@@ -33,10 +36,10 @@ const ProfileOverview=()=>{
                 Following
              </p>
         </div>
-           <span className={classes.name}>{"ss"}</span>
-           <span className={classes.userId}>@{"d"}</span>
+           <span className={classes.name}>{user?.Name}</span>
+           <span className={classes.userId}>@{user?.Username}</span>
            <p className={classes.bio}>{"d"}</p>
-           <button onClick={()=>navigate(`/user/${userId}`)}>My Profile</button>
+           <button onClick={()=>navigate(`/user/${"23"}`)}>My Profile</button>
        </div>
     </div>
 }

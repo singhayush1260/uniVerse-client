@@ -1,15 +1,42 @@
-import { useState } from 'react';
-import classes from './Modal.module.scss'
-import { createPortal } from "react-dom";
-const Modal=({children, isOpened=false})=>{
+import { useState, useRef, useEffect } from 'react';
+import classes from './Modal.module.scss';
+import { createPortal } from 'react-dom';
 
-const modalElement=document.getElementById('modal');
+const Modal = ({ children, isOpened, onClose }) => {
+  const modalRef = useRef();
+  const modalElement = document.getElementById('modal');
+  
+  const [isModalOpened, setIsModalOpened] = useState(isOpened);
 
-//const[isOpened, setIsOpened]=useState(false);
+  useEffect(() => {
+    setIsModalOpened(isOpened);
+  }, [isOpened]);
 
-return createPortal(
-   isOpened ? <div className={classes.modal}>{children}</div> : null,
+  useEffect(() => {
+    if (!isModalOpened) return;
+
+    const clickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        setIsModalOpened(false);
+        onClose();
+      }
+    };
+
+    document.addEventListener('click', clickOutside, true);
+    return () => document.removeEventListener('click', clickOutside, true);
+  }, [isModalOpened, onClose]);
+
+  return createPortal(
+    isModalOpened ? (
+      <div className={classes.modal}>
+        <div className={classes.close_button}>X</div>
+        <div className={classes.children_container} ref={modalRef}>
+          
+          {children}</div>
+      </div>
+    ) : null,
     modalElement
-)
-}
+  );
+};
+
 export default Modal;

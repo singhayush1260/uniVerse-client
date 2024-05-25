@@ -1,40 +1,42 @@
 import classes from "./Post.module.scss";
 import { useState, useRef, useEffect } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { useSelector } from 'react-redux';
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { toast } from "react-toastify";
 import { PiShareFat } from "react-icons/pi";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { LiaHeartSolid } from "react-icons/lia";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BsEmojiSmile } from "react-icons/bs";
-import { useSelector } from 'react-redux';
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import LazyImage from "../../lazy-image/LazyImage";
-import Comments from "../../comments/Comments";
-import { useMutation, useQueryClient } from "react-query";
 import {
   deletePost as deletePostApi,
   updatePost as updatePostApi,
 } from "../../../api/post";
-import { toast } from "react-toastify";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
-const Post = ({ name, userId, postId, caption, image, timestamp }) => {
+import Modal from "../../modal/Modal";
+import LazyImage from "../../lazy-image/LazyImage";
+import Comments from "../../comments/Comments";
+import SocialShare from "../../widgets/social-share/SocialShare";
+import EmojiPicker from 'emoji-picker-react';
+import USER_FALLBACK from "../../../assets/images/dummy_user.png";
+
+const Post = ({ name, userName, userId, userAvatar, postId, caption, image, timestamp }) => {
   const {userData}=useSelector((state)=>state.userReducer);
   const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
   const [updatedCaption, setUpdatedCaption] = useState(caption ||"");
   const dropdownRef = useRef();
   const queryClient = useQueryClient();
-//console.log("image from post",image)
-//console.log("postId",postId)
   const {
     mutate: deletePost,
     isLoading: isDeleting,
-    isDeletingError,
-    deletingError,
   } = useMutation(deletePostApi, {
-    onSuccess: (data) => {
-      console.log("delete post success", data);
-      queryClient.invalidateQueries("getAllPosts");
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries("getAllPosts");
     },
     onError: (error) => {
       console.log("delete post error", error);
@@ -50,22 +52,21 @@ const Post = ({ name, userId, postId, caption, image, timestamp }) => {
   const {
     mutate: updatePost,
     isLoading: isUpdating,
-    isUpdatingError,
-    updatingError,
   } = useMutation(updatePostApi, {
-    onSuccess: (data) => {
-      console.log("update post success", data);
-      queryClient.invalidateQueries("getAllPosts");
+    onSuccess: async (data) => {
+     await queryClient.invalidateQueries("getAllPosts");
       setShowTextArea(false);
     },
     onError: (error) => {
-      console.log("update post error", error);
+      toast("Error updating post!",{
+        position:"top-center",
+        theme:"dark",
+        type:"error",
+        autoClose:3000
+       })
     },
   });
 
-  // const updatePost = () => {
-  //   setShowTextArea(true);
-  // };
 
   useEffect(() => {
     const clickOutside = (e) => {
@@ -81,14 +82,14 @@ const Post = ({ name, userId, postId, caption, image, timestamp }) => {
     <div className={classes.post_wrapper}>
       <div className={classes.post_header}>
         <div className={classes.user_detail}>
-          <LazyImage src="https://image.lexica.art/full_jpg/7515495b-982d-44d2-9931-5a8bbbf27532" />
+          <LazyImage src={userAvatar || USER_FALLBACK} />
           <div className={classes.group}>
             <a>{name}</a>
-            <span className={classes.userId}>@{userId}</span>
+            <span className={classes.userId}>@{userName}</span>
             <span> {formatDistanceToNow(timestamp, { addSuffix: true })}</span>
           </div>
         </div>
-      { userId===userData._id && <IoEllipsisVertical onClick={() => setShowDropdown(!showDropdown)} />}
+      { userId===userData?._id && <IoEllipsisVertical onClick={() => setShowDropdown(!showDropdown)} />}
         {showDropdown && (
           <div className={classes.dropdown} ref={dropdownRef}>
             <span onClick={() =>  setShowTextArea(true)}>
@@ -107,10 +108,13 @@ const Post = ({ name, userId, postId, caption, image, timestamp }) => {
       </div>}
       <div className={classes.post_control}>
         <div className={classes.group}>
-          <LiaHeartSolid />
+          <LiaHeartSolid onClick={()=>setShowEmojiPicker(!showEmojiPicker)} />
           <FaRegCommentDots onClick={() => setShowComments(!showComments)} />
-          <PiShareFat />
+          <PiShareFat onClick={()=>setShowShareModal(!showShareModal)}/>
         </div>
+        {showEmojiPicker && <div className={classes.emoji_picker}>
+          <EmojiPicker reactionsDefaultOpen={showEmojiPicker} theme="dark"/>
+            </div>}
        <div className={classes.button_group}>
        { showTextArea && <button onClick={()=>{ setUpdatedCaption(caption); setShowTextArea(false)}}>Cancel</button>}
         { showTextArea && <button onClick={()=>updatePost({postId,updatedCaption})}>Done</button>}
@@ -119,8 +123,8 @@ const Post = ({ name, userId, postId, caption, image, timestamp }) => {
       <div className={classes.add_comment}>
         <div className={classes.image_container}>
           <img
-            src="https://image.lexica.art/full_jpg/7515495b-982d-44d2-9931-5a8bbbf27532"
-            alt="user"
+            src={USER_FALLBACK}
+            alt="current_user"
           />
         </div>
         <div className={classes.input_controller}>
@@ -129,6 +133,7 @@ const Post = ({ name, userId, postId, caption, image, timestamp }) => {
         </div>
       </div>
       {showComments && <Comments postId={postId} />}
+      {showShareModal && <Modal isOpened={showShareModal} onClose={()=>setShowShareModal(false)}><SocialShare/> </Modal> }
     </div>
   );
 };
