@@ -1,9 +1,9 @@
 import classes from "./Post.module.scss";
 import { useState, useRef, useEffect } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { useSelector } from 'react-redux';
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { toast } from "react-toastify";
+import useUser from "../../../hooks/useUser";
 import { PiShareFat } from "react-icons/pi";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { LiaHeartSolid } from "react-icons/lia";
@@ -18,19 +18,34 @@ import Modal from "../../modal/Modal";
 import LazyImage from "../../lazy-image/LazyImage";
 import Comments from "../../comments/Comments";
 import SocialShare from "../../widgets/social-share/SocialShare";
-import EmojiPicker from 'emoji-picker-react';
 import USER_FALLBACK from "../../../assets/images/dummy_user.png";
+import Reaction from "../../widgets/reaction/Reaction";
+import DropdownMenu from "../../dropdown-menu/DropdownMenu";
+import { getReaction } from "../../../api/react";
+import {motion} from "framer-motion";
 
 const Post = ({ name, userName, userId, userAvatar, postId, caption, image, timestamp }) => {
-  const {userData}=useSelector((state)=>state.userReducer);
   const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
   const [updatedCaption, setUpdatedCaption] = useState(caption ||"");
+  const[reaction,setReaction]=useState("");
+  const {user}=useUser();
+  //console.log("user from post",user);
   const dropdownRef = useRef();
   const queryClient = useQueryClient();
+
+  const{data,isLoading:isReacting,error}=useQuery(["getPostReaction",postId],()=>getReaction(postId),{
+    enabled:!!postId,
+    onSuccess:()=>{
+      queryClient.invalidateQueries("getAllPosts");
+    }
+  });
+
+  //console.log("reaction in a post",data);
+
   const {
     mutate: deletePost,
     isLoading: isDeleting,
@@ -48,6 +63,7 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
        })
     },
   });
+
 
   const {
     mutate: updatePost,
@@ -67,6 +83,12 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
     },
   });
 
+  const menu=[{id:1,body:<span onClick={() =>  setShowTextArea(true)}>
+    {isUpdating ? <CircularLoader /> : "Update"}
+  </span>},{id:2,body:<span onClick={() => deletePost(postId)}>
+              {isDeleting ? <CircularLoader /> : "Delete"}
+            </span>}]
+
 
   useEffect(() => {
     const clickOutside = (e) => {
@@ -79,7 +101,14 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
   }, []);
 
   return (
-    <div className={classes.post_wrapper}>
+    <motion.div className={classes.post_wrapper}  initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true }}
+    transition={{ duration: 0.3 }}
+    variants={{
+      visible: { opacity: 1, scale: 1 },
+      hidden: { opacity: 0, scale: 0 }
+    }}>
       <div className={classes.post_header}>
         <div className={classes.user_detail}>
           <LazyImage src={userAvatar || USER_FALLBACK} />
@@ -89,15 +118,16 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
             <span> {formatDistanceToNow(timestamp, { addSuffix: true })}</span>
           </div>
         </div>
-      { userId===userData?._id && <IoEllipsisVertical onClick={() => setShowDropdown(!showDropdown)} />}
+      { userId===user?._id && <IoEllipsisVertical onClick={() => setShowDropdown(!showDropdown)} />}
         {showDropdown && (
-          <div className={classes.dropdown} ref={dropdownRef}>
+          <div className={classes.dropdown_container} ref={dropdownRef} >
             <span onClick={() =>  setShowTextArea(true)}>
               {isUpdating ? <CircularLoader /> : "Update"}
             </span>
             <span onClick={() => deletePost(postId)}>
               {isDeleting ? <CircularLoader /> : "Delete"}
             </span>
+            {/* <DropdownMenu menu={menu} showDropdownArg={showDropdown} onClose={()=>setShowDropdown(false)}/> */}
           </div>
         )}
       </div>
@@ -108,13 +138,13 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
       </div>}
       <div className={classes.post_control}>
         <div className={classes.group}>
-          <LiaHeartSolid onClick={()=>setShowEmojiPicker(!showEmojiPicker)} />
+          {/* <LiaHeartSolid onClick={()=>setShowEmojiPicker(!showEmojiPicker)} /> */}
+          <span onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>{isReacting ? <CircularLoader/> : (data?.likes[0]?.Reaction || <LiaHeartSolid/>)}</span>
+          {/* <img onClick={()=>setShowEmojiPicker(!showEmojiPicker)} src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f603.png"/> */}
           <FaRegCommentDots onClick={() => setShowComments(!showComments)} />
           <PiShareFat onClick={()=>setShowShareModal(!showShareModal)}/>
         </div>
-        {showEmojiPicker && <div className={classes.emoji_picker}>
-          <EmojiPicker reactionsDefaultOpen={showEmojiPicker} theme="dark"/>
-            </div>}
+        {showEmojiPicker && <Reaction parentId={postId} reactionsDefaultOpen={showEmojiPicker} setReaction={setReaction} onClose={()=>setShowEmojiPicker(false)}/>}
        <div className={classes.button_group}>
        { showTextArea && <button onClick={()=>{ setUpdatedCaption(caption); setShowTextArea(false)}}>Cancel</button>}
         { showTextArea && <button onClick={()=>updatePost({postId,updatedCaption})}>Done</button>}
@@ -134,7 +164,7 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
       </div>
       {showComments && <Comments postId={postId} />}
       {showShareModal && <Modal isOpened={showShareModal} onClose={()=>setShowShareModal(false)}><SocialShare/> </Modal> }
-    </div>
+    </motion.div>
   );
 };
 export default Post;

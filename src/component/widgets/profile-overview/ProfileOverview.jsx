@@ -2,31 +2,32 @@ import classes from './ProfileOverview.module.scss';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LazyImage from '../../lazy-image/LazyImage';
-import AVARAR_FALLBACK from "../../../assets/images/dummy_user.png";
+import USER_FALLBACK from "../../../assets/images/dummy_user.png";
+import COVER_FALLBACK from "../../../assets/images/dummy_cover.png";
 import useUser from '../../../hooks/useUser';
+
 const ProfileOverview=()=>{
    
    const {userData}=useSelector((state)=>state.userReducer);
 
-   const { user, isLoading, isError }=useUser();
+   const { user }=useUser();
 
-   //console.log("userData from profile overview",user);
-   const Avatar=userData?.Avatar;
+
 
    const navigate=useNavigate();
 
     return <div className={classes.widget_wrapper}>
         <div className={classes.image_container}>
         <div className={classes.cover_pic}>
-        {/* <LazyImage src={cover_picture}/> */}
+        <LazyImage src={COVER_FALLBACK}/>
         </div>
            <div className={classes.profile_pic}>
               {/* <img src={profile_picture} alt="user" /> */}
-              <LazyImage src={user?.Avatar || AVARAR_FALLBACK}/>
+              <LazyImage src={user?.Avatar || USER_FALLBACK}/>
            </div>
         </div>
        <div className={classes.user_detail}>
-       <div className={classes.followers}>
+       {/* <div className={classes.followers}>
              <p>
                 <span>{2}</span>
                 Followers
@@ -35,11 +36,11 @@ const ProfileOverview=()=>{
                 <span>{4}</span>
                 Following
              </p>
-        </div>
+        </div> */}
            <span className={classes.name}>{user?.Name}</span>
            <span className={classes.userId}>@{user?.Username}</span>
-           <p className={classes.bio}>{"d"}</p>
-           <button onClick={()=>navigate(`/user/${"23"}`)}>My Profile</button>
+           <p className={classes.bio}>{user?.Bio}</p>
+           <button onClick={()=>navigate(`/user/${user._id}`, { state: { user } })}>My Profile</button>
        </div>
     </div>
 }

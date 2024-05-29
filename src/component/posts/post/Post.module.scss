@@ -14,7 +14,8 @@
     display: flex;
     justify-content: space-between;
     position: relative;
-    .dropdown{
+    .dropdown_container{
+      width: 7em;
       position: absolute;
       right:10px;
       padding: 0.5rem 1rem;
@@ -89,9 +90,16 @@
     justify-content: space-between;
     position: relative;
     .group {
+      display: flex;
+      gap:10px;
+      span{
+        width: 1.4rem;
+        height: 1.4rem;
+        cursor: pointer;
+      }
       svg {
         font-size: 1.2rem;
-        margin-right: 1em;
+        
       }
       & > svg:nth-child(1) { 
         color: red;
@@ -102,12 +110,12 @@
         right: -15rem;
       }
     }
-    .emoji_picker{
-      position: absolute;
-      top:-3rem;
-      left:2rem;
-      z-index: 9999;
-    }
+    // .emoji_picker{
+    //   position: absolute;
+    //   top:-3rem;
+    //   left:2rem;
+    //   z-index: 9999;
+    // }
  .button_group{
   display: flex;
   gap:10px;

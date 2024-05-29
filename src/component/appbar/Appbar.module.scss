@@ -50,12 +50,13 @@
       height: 25px;
       border-radius: 50%;
     }
-    .dropdown_menu {
-      padding: 0.5rem 1rem;
+    .dropdown_menu_container {
       position: absolute;
       top: 35px;
       right: 50%;
       transform: translateX(50%);
+      z-index: 9999;
+      padding: 1em;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -69,6 +70,9 @@
         padding: 5px;
         background-color: var(--color-secondary);
         color: var(--color-text-primary);
+      }
+      div{
+        cursor: pointer;
       }
     }
   }
@@ -90,6 +94,7 @@
 box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
 backdrop-filter: blur( 9.5px );
 -webkit-backdrop-filter: blur( 9.5px );
+z-index: 9999999;
   }
 }
 @media (min-width: 320px) and (max-width: 520px) {

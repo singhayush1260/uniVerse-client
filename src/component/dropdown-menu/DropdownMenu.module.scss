@@ -1,0 +1,18 @@
+.dropdown_menu {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-primary);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    button {
+      width: 100%;
+      padding: 5px;
+      background-color: var(--color-secondary);
+      color: var(--color-text-primary);
+    }
+  }

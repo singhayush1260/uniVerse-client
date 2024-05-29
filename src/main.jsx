@@ -8,6 +8,7 @@ import store from "./store/store.js";
 import ThemeProvider from "./component/theme-provider/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 import {AuthContextProvider} from "./context/AuthContext.jsx";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 import ErrorBoundary from "./component/error-boundary/ErrorBoundary.jsx";
 
 const queryClient = new QueryClient({
@@ -25,9 +26,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         <BrowserRouter>
           <AuthContextProvider>
+         <SocketContextProvider>
          <ThemeProvider>
          <App/>
          </ThemeProvider>
+         </SocketContextProvider>
           </AuthContextProvider>
         </BrowserRouter>
       </Provider>

@@ -12,11 +12,13 @@ import SecuritySetting from "./security-setting-form/SecuritySetting";
 import Appbar from "../../component/appbar/Appbar";
 import { motion } from "framer-motion";
 import Modal from "../../component/modal/Modal";
+import useUser from "../../hooks/useUser";
 const Setting = () => {
 
   const[currentOption, setCurrentOption]=useState(0);
+
+  const{user}=useUser();
   
-  const {userData: { name, userId,bio, profile_picture }, } = useSelector((state) => state.userReducer);
   return (
    <>
     <Appbar/>
@@ -48,7 +50,7 @@ const Setting = () => {
             </div>
           </div>
           <div className={classes.form_container}>
-           { currentOption ===0 &&  <PersonalSetting name={name} userId={userId} bio={bio}/>  }
+           { currentOption ===0 &&  <PersonalSetting name={user?.Name} userId={user?._id} bio={user?.bio}/>  }
            { currentOption===1 &&  <SocialsSetting/> }
            { currentOption ===2 &&  <SecuritySetting/>  }
           </div>

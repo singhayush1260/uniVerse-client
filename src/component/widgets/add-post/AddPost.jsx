@@ -10,7 +10,10 @@ import {
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 import Modal from "../../modal/Modal";
 import WebcamCapture from "../webcam-capture/WebcamCapture";
-const AddPost = () => {
+import LazyImage from "../../lazy-image/LazyImage";
+import USER_FALLBACK from "../../../assets/images/dummy_user.png";
+
+const AddPost = ({currentUser}) => {
   const queryClient = useQueryClient();
   const [images, setImages] = useState([]);
   const [capturedImage, setCapturedImage] = useState(null);
@@ -94,11 +97,12 @@ const AddPost = () => {
   return (
     <div className={classes.widget_wrapper}>
       <div className={classes.left_container}>
-        <div>
-          <img
+        <div className={classes.image_container}>
+          {/* <img
             src="https://image.lexica.art/full_jpg/7515495b-982d-44d2-9931-5a8bbbf27532"
             alt="user"
-          />
+          /> */}
+          <LazyImage src={currentUser?.Avatar || USER_FALLBACK}/>
         </div>
       </div>
       <div className={classes.right_container}>
@@ -138,7 +142,6 @@ const AddPost = () => {
         {(containsImage || capturedImage) && (
           <div className={classes.image_container}>
             {images.map((image) => {
-              console.log("$$$$$", URL.createObjectURL(image));
               return (
                 <div>
                   <img src={URL.createObjectURL(image)} alt="image" />
@@ -159,7 +162,7 @@ const AddPost = () => {
             <WebcamCapture
               setCapturedImage={setCapturedImage}
               setShowWebcam={setShowWebcam}
-            />{" "}
+            />
           </Modal>
         )}
       </div>

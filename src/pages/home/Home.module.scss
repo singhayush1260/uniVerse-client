@@ -17,12 +17,6 @@
     }
    // position: fixed;
   }
-  // .left_sidebar{
-  //   left:0;
-  // }
-  // .right_sidebar{
-  //   right:0;
-  // }
   .timeline{
     width: 50%;
     height: 100vh;
@@ -55,10 +49,10 @@
     display: none;
   }
   .timeline{
-    width: 70%;
+    width: 1000%;
   }
   .right_sidebar{
-    width: 30%;
+    display: none;
   }
 }
 }
