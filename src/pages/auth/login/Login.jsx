@@ -10,18 +10,20 @@ import { BiHide, BiShow } from "react-icons/bi";
 import { login_schema } from "./login_schema";
 import { login } from "../../../api/auth";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
+import { useSocketContext } from "../../../context/SocketContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const{socket}=useSocketContext();
   const dispatch = useDispatch();
   const queryClient=useQueryClient();
   const navigate=useNavigate();
   const{mutate,isLoading,isError,error}=useMutation(login,{
     onSuccess:async(user)=>{
-      console.log("logged in success",user);
-      dispatch({type:"setUser",payload:user})
-      navigate("/")
+      console.log("user from login",user)
       await queryClient.invalidateQueries("validateToken");
+      navigate("/")
+      
     },
     onError:()=>{
 
@@ -37,7 +39,6 @@ const Login = () => {
       mutate({Email,Password});
     },
   });
-  //console.log("errrrrrrs",error?.message)
   return (
     <main className={classes.page_wrapper}>
       <motion.div className={classes.form_container} initial={{ x: "-500px" }}

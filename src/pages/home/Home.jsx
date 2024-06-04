@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import AddPost from "../../component/widgets/add-post/AddPost";
 import MyFriends from "../../component/widgets/my-friends/MyFriends";
@@ -9,11 +10,16 @@ import classes from "./Home.module.scss";
 import Appbar from "../../component/appbar/Appbar";
 import { getAllCommunityUsers } from "../../api/user";
 import useUser from "../../hooks/useUser";
+import { useSocketContext } from "../../context/SocketContext";
+
 const Home = () => {
 
   const{user:currentUser}=useUser();
 
+  const {socket}=useSocketContext();
+
   const{data,isLoading,error}=useQuery("getAllCommunityUsers",getAllCommunityUsers);
+
  
   return (
     <>

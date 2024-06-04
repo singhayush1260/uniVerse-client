@@ -27,7 +27,7 @@ const Posts = () => {
             userId={user?._id}
             userAvatar={user?.Avatar}
             caption={post.Caption}
-            image={post?.MediaURLs?.length >0 ? post?.MediaURLs[0]:""}
+            mediaUrls={post?.MediaURLs}
             timestamp={new Date(post.createdAt)}
           />
         );

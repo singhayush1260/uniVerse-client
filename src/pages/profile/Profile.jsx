@@ -1,31 +1,28 @@
 import classes from "./Profile.module.scss";
 import { useState } from "react";
 import { useLocation,useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import Appbar from "../../component/appbar/Appbar";
-import { FaXTwitter, FaLinkedin } from "react-icons/fa6";
-import { FaFacebookSquare } from "react-icons/fa";
-import { AiFillInstagram } from "react-icons/ai";
 import {useQuery,useMutation,useQueryClient} from "react-query";
+import { toast } from "react-toastify";
+import useUser from "../../hooks/useUser";
+import {useSocketContext} from "../../context/SocketContext"
 import { getAllPostsByUser } from "../../api/post";
-import { useParams } from "react-router-dom";
+import { sendRequest as sendRequestApi } from "../../api/friend";
+import { CiEdit } from "react-icons/ci";
+import { IoIosLock } from "react-icons/io";
+import { TfiLayoutMediaOverlay, TfiVideoClapper } from "react-icons/tfi";
+import Appbar from "../../component/appbar/Appbar";
 import Modal from "../../component/modal/Modal";
 import Post from "../../component/posts/post/Post";
-import { CiEdit } from "react-icons/ci";
 import LazyImage from "../../component/lazy-image/LazyImage";
 import UploadPictureCrop from "../../component/widgets/upload-picture-crop/UploadPictureCrop";
-import useUser from "../../hooks/useUser";
+import CircularLoader from "../../component/loaders/circular-loader/CircularLoader";
 import USER_FALLBACK from "../../assets/images/dummy_user.png";
 import COVER_FALLBACK from "../../assets/images/dummy_cover.png";
-import { sendRequest as sendRequestApi } from "../../api/friend";
-import CircularLoader from "../../component/loaders/circular-loader/CircularLoader";
-import {useSocketContext} from "../../context/SocketContext"
-import { toast } from "react-toastify";
-import { IoIosLock } from "react-icons/io";
+import ProfileSkeleton from "./ProfileSkeleton";
 
 const Profile = () => {
-
-  const[showPostModal,setShowPostModal]=useState(false);
+  
+  const[postsData,setPostsData]=useState([]);
   const[modalPost,setModalPost]=useState(null);
   const[currentCarouselItem,setCurrentCarouselItem]=useState(1);
   const[showUpdatePictureModal,setShowUpdatePictureModal]=useState(false);
@@ -33,18 +30,20 @@ const Profile = () => {
   const navigate=useNavigate();
   const location=useLocation();
   const userId=location?.state?.user?._id;
-  const{user:currentUser}=useUser();
-  const {user,isFriend,friend}=useUser(userId,"getOtherUser");
+  const {socket}=useSocketContext();
+  const{user:currentUser,isLoading:isLoadingCurrentUser}=useUser();
+  const {user,isFriend,friend,isLoading:isLoadingUser}=useUser(userId,"getOtherUser");
   const isRequestSent=friend?.Status===1;
   const isRequestDeclined=friend?.Status===2;
-  console.log("friend",friend,isRequestDeclined);
- const {socket}=useSocketContext();
-  const { data, error, isLoading } = useQuery(["getAllPostsByUser", userId], () => getAllPostsByUser(userId), {
-    enabled: !!userId 
-  });
-  const {mutate,data:sentRequestResponse,isLoading:sendingRequest}=useMutation(sendRequestApi,{
+ 
+  const { error, isLoading:isLoadingPosts } = useQuery(["getAllPostsByUser", userId], () => getAllPostsByUser(userId), {
+    enabled: !!userId,
     onSuccess:(data)=>{
-        console.log("requets send success",data);
+      setPostsData(data?.userPosts);
+    }
+  });
+  const {mutate,isLoading:sendingRequest}=useMutation(sendRequestApi,{
+    onSuccess:()=>{
         queryClient.invalidateQueries("getOtherUser");
     },
     onError:()=>{
@@ -66,6 +65,13 @@ const createGroup=()=>{
 }
 
 const isPrivate=false;
+if(isLoadingUser || isLoadingPosts){
+  return <ProfileSkeleton/>
+}
+
+// console.log("userId",userId);
+// console.log("currentUser",currentUser?._id);
+// console.log("!userId===currentUser?._id",!(userId===currentUser?._id));
   return (
     <>
       <Appbar />
@@ -83,9 +89,9 @@ const isPrivate=false;
           <div className={classes.bottom_left}>
             <h2>{user?.Name}</h2>
             <span>@{user?.Username}</span>
-            <p>{""}</p>
-            { !isFriend && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
-            <button onClick={()=>createGroup()}>Message</button>  
+            <p>{user?.Bio}</p>
+            {  (!userId===currentUser?._id || !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
+           { !(userId===currentUser?._id) && <button onClick={()=>createGroup()}>Message</button>  }
           </div>
           <div className={classes.bottom_right}>
           {isPrivate && <div className={classes.private_account}>
@@ -102,29 +108,35 @@ const isPrivate=false;
                 <div className={currentCarouselItem===1 && classes.current_carousal_item} onClick={()=>setCurrentCarouselItem(1)}>
                   Post
                   <span>
-                    <b>12</b>
+                    <b>{postsData?.length}</b>
                   </span>
                 </div>
                 <div className={currentCarouselItem===2 && classes.current_carousal_item} onClick={()=>setCurrentCarouselItem(2)}>
-                  Photos
+                  Videos
                   <span>
-                    <b>31</b>
+                    <b>0</b>
                   </span>
                 </div>
                 
               </div>
             </div>
             <div className={classes.data_grid}>
-              {data?.Posts?.map((post) => {
-                //console.log("post",post)
+              {currentCarouselItem===2 && <div>
+                <TfiVideoClapper/>
+                No video found.
+                </div>}
+              {currentCarouselItem===1 &&  postsData?.length ==0 && <div>
+                <TfiLayoutMediaOverlay/>
+                No post found.</div>}
+              {currentCarouselItem===1 && postsData?.length!==0 && postsData?.map((pd) => {
                 return (
-                  <div className={classes.grid_item} key={post.postId} onClick={()=>{setModalPost(post); setShowPostModal(true)}}>
-                    <p>{ post?.Caption?.length>80 ? post?.Caption?.slice(0,60)+"...":post?.Caption}</p>
+                  <div className={classes.grid_item} key={pd?.post?.postId} onClick={()=>{setModalPost(pd)}}>
+                    <p>{ pd?.post.Caption?.length>80 ? pd?.post?.Caption?.slice(0,60)+"...":pd?.post?.Caption}</p>
                     {
-                      post?.MediaURLs?.length>0 && post?.MediaURLs?.map((url)=>{
+                      pd?.post?.MediaURLs?.length>0 && pd?.post?.MediaURLs?.map((url)=>{
                         return <div className={classes.post_image_container}>
-                          <img src={url}
-                        alt={`${post.userId}-${post.postId}`} />
+                          <LazyImage src={url}
+                        alt={`${pd?.post?.userId}-${pd?.post?.postId}`} />
                         </div>
                       })
                     }
@@ -135,15 +147,17 @@ const isPrivate=false;
           </>}
           </div>
         </div>
-          {showPostModal && <Modal isOpened={showPostModal} onClose={()=>setShowPostModal(false)}>
+          {modalPost && <Modal isOpened={modalPost} onClose={()=>setModalPost(null)}>
             <Post
-            key={modalPost?.id}
-            postId={modalPost?.id}
-            name={"Evgen Ledo"}
-            userId={modalPost?.By}
-            caption={modalPost?.Caption}
-            image={modalPost?.MediaURLs[0]}
-            timestamp={new Date(modalPost?.createdAt)}
+            key={modalPost?.post?._id}
+            postId={modalPost?.post?._id}
+            name={modalPost?.user?.Name}
+            userAvatar={modalPost?.user?.Avatar}
+            userName={modalPost?.user?.Username}
+            userId={currentUser?._id}
+            caption={modalPost?.post?.Caption}
+            image={modalPost?.post?.MediaURLs[0]}
+            timestamp={new Date(modalPost?.post?.createdAt)}
           />
         </Modal>}
         {showUpdatePictureModal && <Modal isOpened={showUpdatePictureModal} onClose={()=>setShowUpdatePictureModal(false)}>

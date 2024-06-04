@@ -17,7 +17,6 @@ export const uploadToCloudinary = async (formData) => {
     console.log("response not okay", body);
     throw new Error(body.message);
   }
-  console.log("upload to clidi response", body);
   return body;
 };
 
@@ -76,8 +75,7 @@ export const updatePost = async ({ postId, updatedCaption }) => {
 };
 
 export const getAllPostsByUser = async (userId) => {
-  console.log("getAllPostByUser", userId);
-  const response = await fetch(`${API_BASE_URL}/api/post?${userId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/post?userId=${userId}`, {
     credentials: "include",
   });
   if (!response.ok) {

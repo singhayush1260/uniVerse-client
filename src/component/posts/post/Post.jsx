@@ -23,8 +23,10 @@ import Reaction from "../../widgets/reaction/Reaction";
 import DropdownMenu from "../../dropdown-menu/DropdownMenu";
 import { getReaction } from "../../../api/react";
 import {motion} from "framer-motion";
+import ImageSlider from "../../image-slider/ImageSlider";
 
-const Post = ({ name, userName, userId, userAvatar, postId, caption, image, timestamp }) => {
+const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, timestamp }) => {
+  const[images,setImages]=useState(mediaUrls);
   const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -33,7 +35,6 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
   const [updatedCaption, setUpdatedCaption] = useState(caption ||"");
   const[reaction,setReaction]=useState("");
   const {user}=useUser();
-  //console.log("user from post",user);
   const dropdownRef = useRef();
   const queryClient = useQueryClient();
 
@@ -83,11 +84,6 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
     },
   });
 
-  const menu=[{id:1,body:<span onClick={() =>  setShowTextArea(true)}>
-    {isUpdating ? <CircularLoader /> : "Update"}
-  </span>},{id:2,body:<span onClick={() => deletePost(postId)}>
-              {isDeleting ? <CircularLoader /> : "Delete"}
-            </span>}]
 
 
   useEffect(() => {
@@ -133,8 +129,9 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, image, time
       </div>
       {!showTextArea && <p className={classes.caption}>{caption}</p>}
       {showTextArea && <textarea autoFocus cols="30" rows="1" className={classes.update_caption} value={updatedCaption} onChange={(e)=>setUpdatedCaption(e.target.value)}  />}
-    {image &&  <div className={classes.post_image}>
-        <LazyImage src={image} />
+    {images &&  <div className={classes.post_image}>
+       {/* {images.map((image)=> <LazyImage src={image} />)} */}
+       <ImageSlider images={images}/>
       </div>}
       <div className={classes.post_control}>
         <div className={classes.group}>

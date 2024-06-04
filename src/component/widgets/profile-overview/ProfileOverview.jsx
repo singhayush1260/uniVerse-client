@@ -40,7 +40,7 @@ const ProfileOverview=()=>{
            <span className={classes.name}>{user?.Name}</span>
            <span className={classes.userId}>@{user?.Username}</span>
            <p className={classes.bio}>{user?.Bio}</p>
-           <button onClick={()=>navigate(`/user/${user._id}`, { state: { user } })}>My Profile</button>
+           <button onClick={()=>navigate(`/user/${user?.Username}`, { state: { user } })}>My Profile</button>
        </div>
     </div>
 }

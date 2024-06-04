@@ -14,12 +14,15 @@ import SearchUser from '../widgets/search-user/SearchUser';
 import DropdownMenu from '../dropdown-menu/DropdownMenu';
 import Modal from '../modal/Modal';
 import FriendRequests from '../friend-requests/FriendRequests';
+import useUser from '../../hooks/useUser';
+import USER_FALLBACK from "../../assets/images/dummy_user.png"
 const Appbar = () => {
    const dropdownRef = useRef();
    const queryClient=useQueryClient();
    const [showDropdown, setShowDropdown] = useState(false);
    const [showRequestModal, setShowRequestModal] = useState(false);
    const navigate = useNavigate();
+   const {user:currentUser}=useUser();
    const{ refetch, isLoading:loggingOut,isError,error}=useQuery("logout",logout,{
       enabled:false,
       onSuccess:async()=>{
@@ -61,20 +64,20 @@ useEffect(() => {
       <div className={classes.logo_and_search}>
          <h1> <Link to="/">UV</Link> </h1>
          {/* <input type="text" placeholder="Search user.." /> */}
-         <SearchUser/>
+         <SearchUser currentUser={currentUser}/>
       </div>
       <nav>
          <span className={pathname === "/" ? classes.current_nav : ""} onClick={() => navigate("/")}> <GoHomeFill /> </span>
          <span className={pathname === "/messenger" ? classes.current_nav : ""} onClick={() => navigate("/messenger")}><AiOutlineMessage /></span>
          <span className={pathname === "/notifications" ? classes.current_nav : ""} onClick={() => navigate("/notifications")}><IoMdNotificationsOutline /></span>
-         <span className={pathname === "/likes" ? classes.current_nav : ""} onClick={() => navigate("/likes")}><IoIosHeartEmpty /></span>
+         {/* <span className={pathname === "/likes" ? classes.current_nav : ""} onClick={() => navigate("/likes")}><IoIosHeartEmpty /></span> */}
           {/* /setting
           /community */}
 
       </nav>
       <div className={classes.user_menu}>
-         <img src="https://image.lexica.art/full_jpg/7515495b-982d-44d2-9931-5a8bbbf27532" alt="user" />
-         <span>{userData?.Username}</span>
+         <img src={currentUser?.Avatar || USER_FALLBACK} alt="user" />
+         <span>{currentUser?.Name}</span>
          {!showDropdown && <AiFillCaretDown onClick={() => setShowDropdown(true)} />}
          {showDropdown && <AiFillCaretUp onClick={() => setShowDropdown(false)} />}
          { showDropdown && <div className={classes.dropdown_menu_container} ref={dropdownRef}>
@@ -82,7 +85,7 @@ useEffect(() => {
            <Link to="/settings">Setting</Link>
            </div>
             <div>
-            <Link to="/user/as2">Profile</Link>
+            <Link to={`/user/${currentUser?.Username}`}>Profile</Link>
             </div>
             <div onClick={()=>setShowRequestModal(true)}>Requests</div>
             <button onClick={()=>dispatch({type:'toggleTheme'})}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>

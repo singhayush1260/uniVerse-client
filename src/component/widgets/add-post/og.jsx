@@ -1,18 +1,19 @@
 import classes from "./AddPost.module.scss";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { FcCompactCamera, FcPicture, FcVideoCall } from "react-icons/fc";
-import { createPost as createPostApi } from "../../../api/post";
+import {
+  createPost as createPostApi,
+  uploadToCloudinary as uploadToCloudinaryApi,
+} from "../../../api/post";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 import Modal from "../../modal/Modal";
 import WebcamCapture from "../webcam-capture/WebcamCapture";
 import LazyImage from "../../lazy-image/LazyImage";
 import USER_FALLBACK from "../../../assets/images/dummy_user.png";
-import useCloudinary from "../../../hooks/useCloudinary";
-import ImageUploader from "../image-uploader/ImageUploader";
 
-const AddPost = ({ currentUser }) => {
+const AddPost = ({currentUser}) => {
   const queryClient = useQueryClient();
   const [images, setImages] = useState([]);
   const [capturedImage, setCapturedImage] = useState(null);
@@ -21,55 +22,31 @@ const AddPost = ({ currentUser }) => {
   const containsImage = images?.length > 0;
   const containsCaption = caption?.length > 0;
 
-  const addImages = useCallback(
-    (e) => {
-      const selectedFiles = Array.from(e.target.files);
-      const totalFiles = images?.length + selectedFiles.length;
+  const addImages = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const totalFiles = images?.length + selectedFiles.length;
 
-      if (totalFiles > 5) {
-        const remainingSlots = 5 - images?.length;
-        const filesToAdd = selectedFiles.slice(0, remainingSlots);
-        setImages((prevImages) => [...prevImages, ...filesToAdd]);
-        toast("You can only upload up to 5 images.", {
-          position: "top-center",
-          theme: "dark",
-          type: "error",
-          autoClose: 3000,
-        });
-      } else {
-        setImages((prevImages) => [...prevImages, ...selectedFiles]);
-      }
-    },
-    [images, setImages, toast]
-  );
-
-  const removeSelection = useCallback((item) => {
-    setImages((images) => images.filter((image) => image !== item));
-  });
-
-  const {
-    upload,
-    isLoading: uploadingToCloudinary,
-    error,
-  } = useCloudinary({
-    onSuccess: (data) => {
-      console.log("Upload successful!", data);
-      const imageUrls = data?.map((datum) => datum.url);
-      console.log("images urls", imageUrls);
-      createPost({ attachments: imageUrls, caption });
-    },
-    onError: (error) => {
-      console.log("error uplodmin to cloudiaf",error)
-      toast("Error creating post.", {
+    if (totalFiles > 5) {
+      const remainingSlots = 5 - images?.length;
+      const filesToAdd = selectedFiles.slice(0, remainingSlots);
+      setImages((prevImages) => [...prevImages, ...filesToAdd]);
+      toast("You can only upload up to 5 images.", {
         position: "top-center",
         theme: "dark",
         type: "error",
         autoClose: 3000,
       });
-    },
-  });
-
-  const { mutate: createPost, isLoading } = useMutation(createPostApi, {
+    } else {
+      setImages((prevImages) => [...prevImages, ...selectedFiles]);
+    }
+  };
+  const removeSelection = (item) => {
+    setImages((images) => images.filter((image) => image !== item));
+  };
+  const {
+    mutate: createPost,
+    isLoading,
+  } = useMutation(createPostApi, {
     onSuccess: (data) => {
       queryClient.invalidateQueries("getAllPosts");
       setImages([]);
@@ -85,20 +62,43 @@ const AddPost = ({ currentUser }) => {
       });
     },
   });
+  const {
+    mutate: uploadToCloudinary,
+   isLoading: cloudinaryIsLoading,
+  } = useMutation(uploadToCloudinaryApi, {
+    onSuccess: (data) => {
+      createPost({ attachments: [data.url], caption });
+    },
+    onError: (error) => {
+      toast("Error creating post.", {
+        position: "top-center",
+        theme: "dark",
+        type: "error",
+        autoClose: 3000,
+      });
+    },
+  });
 
   const createPostButtonClick = () => {
+    const formData = new FormData();
     if (images?.length > 0) {
-      upload(images);
+      formData.append("file", images[0]);
+      formData.append("upload_preset", "j4yolevb");
+      formData.append("cloud_name", "dhzpiglyn");
+      uploadToCloudinary(formData);
     }
     if (capturedImage) {
-      upload([capturedImage]);
+      formData.append("file", capturedImage);
+      formData.append("upload_preset", "j4yolevb");
+      formData.append("cloud_name", "dhzpiglyn");
+      uploadToCloudinary(formData);
     }
   };
   return (
     <div className={classes.widget_wrapper}>
       <div className={classes.left_container}>
         <div className={classes.image_container}>
-          <LazyImage src={currentUser?.Avatar || USER_FALLBACK} />
+          <LazyImage src={currentUser?.Avatar || USER_FALLBACK}/>
         </div>
       </div>
       <div className={classes.right_container}>
@@ -123,12 +123,15 @@ const AddPost = ({ currentUser }) => {
             onChange={(e) => addImages(e)}
             multiple
           />
+          {/* <label>
+            <FcVideoCall /> <span>Video</span>{" "}
+          </label> */}
           {(containsCaption || containsImage || capturedImage) && (
             <button
-              disabled={isLoading || uploadingToCloudinary}
+              disabled={isLoading || cloudinaryIsLoading}
               onClick={() => createPostButtonClick()}
             >
-              {isLoading || uploadingToCloudinary ? <CircularLoader /> : "Post"}
+              {isLoading || cloudinaryIsLoading ? <CircularLoader /> : "Post"}
             </button>
           )}
         </div>

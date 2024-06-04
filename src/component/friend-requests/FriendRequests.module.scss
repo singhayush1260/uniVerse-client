@@ -10,11 +10,49 @@
   h4 {
     padding: 0.8rem;
   }
+  .error{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .not_found {
     margin-left: 35%;
     margin-top: 25%;
   }
   .friend_requests_list {
+    .user_skeleton {
+      width: 100%;
+      display: flex;
+      //align-items: center;
+      gap: 10px;
+      background-color: var(--color-primary);
+      padding: 0.2rem;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      .img {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 40%;
+        animation: skeleton-loading 1s linear infinite alternate;
+      }
+      .detail {
+        width: 80%;
+        display: flex;
+        align-items: center;
+        div {
+          width: 70%;
+          height: 0.9rem;
+          border-radius: 20px;
+          animation: skeleton-loading 1s linear infinite alternate;
+        }
+        & > div:nth-child(1) {
+          margin-top: 10px;
+          margin-bottom: 7px;
+        }
+      }
+    }
     .friend_requests_item {
       display: flex;
       align-items: center;
@@ -46,7 +84,7 @@
       }
       &:hover {
         & > div:nth-child(1) {
-          p {
+          a {
             text-decoration: underline;
             &:hover {
               cursor: pointer;
@@ -55,5 +93,13 @@
         }
       }
     }
+  }
+}
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(0, 0%, 17%);
+  }
+  100% {
+    background-color: hsl(0, 0%, 14%);
   }
 }

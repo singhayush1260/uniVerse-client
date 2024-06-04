@@ -4,6 +4,9 @@
     align-items: center;
     justify-content: center;
     background-color: var(--color-primary);
+    div{
+      width: 45vw;
+    }
   }
   @media (min-width: 320px) and (max-width: 786px) {
     .page_wrapper {

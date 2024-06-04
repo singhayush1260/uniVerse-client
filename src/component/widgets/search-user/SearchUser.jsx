@@ -7,12 +7,15 @@ import LazyImage from "../../lazy-image/LazyImage";
 import useDebounce from "../../../hooks/useDebounce";
 import { searchCommunityUser } from "../../../api/user";
 import USER_FALLBACK from "../../../assets/images/dummy_user.png";
-const SearchUser = () => {
+const SearchUser = ({currentUser}) => {
   const navigate=useNavigate();
   const [searchParam, setSearchParam] = useState("");
   const isSeaching = searchParam.length > 0;
-  const { data: users, isLoading, refetch } = useQuery(["searchCommunityUser", searchParam], () => searchCommunityUser(searchParam),{ enabled: false,});
-  const debouncedSearch = useDebounce(refetch, 1000);
+  const { data, isLoading, refetch } = useQuery(["searchCommunityUser", searchParam], () => searchCommunityUser(searchParam),{ enabled: false,});
+  //console.log("users from search users",data);
+  const debouncedSearch = searchParam.length>0 && useDebounce(refetch, 1000);
+  const filteredUsers=!data?.communityUsers && data?.filter((user)=>user?._id!==currentUser?._id);
+  //console.log("filtered users",filteredUsers)
   return (
     <div className={classes.search_user}>
       <input
@@ -37,13 +40,13 @@ const SearchUser = () => {
               <p></p>
             </div>
           )}
-          {!users && !isLoading && (
+          {!filteredUsers && !isLoading && (
             <div style={{ fontSize: "0.8rem" }}>No user found.</div>
           )}
 
-          {users?.map((user) => {
+          {filteredUsers?.map((user) => {
             return (
-              <div onClick={()=>navigate(`/user/${user?.Username}`, { state: { user } })}>
+              <div key={user?._id} onClick={()=>navigate(`/user/${user?.Username}`, { state: { user } })}>
                 <LazyImage src={user.Avatar || USER_FALLBACK} />
                 <p>{user?.Name||user?.Username}</p>
               </div>

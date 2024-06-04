@@ -6,8 +6,42 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.2em;
+  gap: 0.5em;
   border-top: 1px solid rgb(70, 70, 70);
+  position: relative;
+  .emoji_picker{
+    position: absolute;
+    bottom: 4em;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 15em;
+  }
+  .attachment_container{
+    position: relative;
+    .attachment_picker{
+      position: absolute;
+      bottom:1.5em;
+      display: flex;
+      flex-direction: column;
+      gap:0.2em;
+      background-color: var(--color-primary);
+      padding: 0.4em;
+      border-radius: 5px;
+      span{
+        display: flex;
+        align-items: center;
+        gap:5px;
+        padding: 5px;
+        border-radius: 5px;
+        &:hover{
+          background-color: var(--color-secondary);
+          cursor: pointer;
+        }
+
+      }
+    }
+  }
   input {
     width: 90%;
     padding: 0.5em;

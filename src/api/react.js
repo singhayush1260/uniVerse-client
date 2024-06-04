@@ -20,7 +20,7 @@ export const reactOn=async({like,reaction,model,parentId})=>{
     }
 
     export const getReaction = async (parentId) => {
-      console.log("getReaction parentId",parentId);
+     // console.log("getReaction parentId",parentId);
       const response = await fetch(`${API_BASE_URL}/api/react/${parentId}`, {
         credentials: "include",
       });
