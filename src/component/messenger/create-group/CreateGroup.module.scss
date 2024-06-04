@@ -1,5 +1,37 @@
 .create_group{
     background-color: red;
-    width: 50vw;
+    width: 35vw;
     height:50vh ;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:0.5em;
+    .input_controller {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #e5e5e5;
+        background-color: #f6fafd;
+        input {
+          padding: 0.4rem 1rem;
+          width: 90%;
+          outline: none;
+          border: none;
+          background-color: #f6fafd;
+          &:active {
+            background-color: #f6fafd;
+          }
+          &:focus {
+            background-color: #f6fafd;
+          }
+        }
+        svg {
+          color: #5b5a5a;
+        }
+      }
+
 }

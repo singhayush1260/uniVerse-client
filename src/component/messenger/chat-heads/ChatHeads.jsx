@@ -5,6 +5,7 @@ import USER_FALLBACK from "../../../assets/images/dummy_user.png";
 import { format } from "date-fns";
 import Modal from "../../modal/Modal";
 import CreateGroup from "../create-group/CreateGroup";
+import { MdOutlineGroupAdd } from "react-icons/md";
 const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading }) => {
 
 const[showModal,setShowModal]=useState(false);
@@ -33,7 +34,7 @@ const[showModal,setShowModal]=useState(false);
             <p>{chatHead?.Members[0]?.Name}</p>
             <p>{formattedDate}</p>
           </div>
-          <div>{chatHead?.LastUpdation?.Message?.Message}</div>
+          <div style={{textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}}>{chatHead?.LastUpdation?.Message?.Message}</div>
         </div>
       </div>
     );
@@ -42,7 +43,9 @@ const[showModal,setShowModal]=useState(false);
   return (
     <>
     <div className={classes.chat_heads_list}>
-      <button>Create Group</button>
+      <div className={classes.create_group_button} onClick={()=>setShowModal(true)}>
+        <MdOutlineGroupAdd/>
+      </div>
       {isLoading &&
         Array.from({ length: 4 }).map((i) => {
           return (
