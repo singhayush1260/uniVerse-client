@@ -1,9 +1,15 @@
 import classes from "./ChatHeads.module.scss";
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import LazyImage from "../../lazy-image/LazyImage";
 import USER_FALLBACK from "../../../assets/images/dummy_user.png";
 import { format } from "date-fns";
+import Modal from "../../modal/Modal";
+import CreateGroup from "../create-group/CreateGroup";
 const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading }) => {
+
+const[showModal,setShowModal]=useState(false);
+
+
   const ChatHeadItem = ({ chatHead }) => {
     const formattedDate = useMemo(() => {
       if (chatHead?.LastUpdation?.Message?.createdAt) {
@@ -27,14 +33,16 @@ const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading }) => {
             <p>{chatHead?.Members[0]?.Name}</p>
             <p>{formattedDate}</p>
           </div>
-          <div>{chatHead?.LastUpdation?.Message.Message}</div>
+          <div>{chatHead?.LastUpdation?.Message?.Message}</div>
         </div>
       </div>
     );
   };
 
   return (
+    <>
     <div className={classes.chat_heads_list}>
+      <button>Create Group</button>
       {isLoading &&
         Array.from({ length: 4 }).map((i) => {
           return (
@@ -53,6 +61,8 @@ const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading }) => {
           return <ChatHeadItem key={chatHead?._id} chatHead={chatHead} />;
         })}
     </div>
+    <Modal isOpened={showModal} onClose={()=>setShowModal(false)}><CreateGroup/> </Modal>
+    </>
   );
 };
 export default ChatHeads;

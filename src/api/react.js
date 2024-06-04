@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_LOCAL_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const reactOn=async({like,reaction,model,parentId})=>{
     console.log("react on data from api",like,reaction,model,parentId);

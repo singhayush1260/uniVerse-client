@@ -16,6 +16,7 @@ import Modal from '../modal/Modal';
 import FriendRequests from '../friend-requests/FriendRequests';
 import useUser from '../../hooks/useUser';
 import USER_FALLBACK from "../../assets/images/dummy_user.png"
+import { useGeneralContext } from '../../context/GeneralContext';
 const Appbar = () => {
    const dropdownRef = useRef();
    const queryClient=useQueryClient();
@@ -42,7 +43,7 @@ const Appbar = () => {
    
    const dispatch=useDispatch();
    const {isDarkTheme}=useSelector((state)=>state.themeReducer);
-   const {userData}=useSelector((state)=>state.userReducer);
+   const{toggleTheme}=useGeneralContext();
 
    const menu=[{_id:1,body:<Link to="/settings">Setting</Link>},
 {_id:2,body:<Link to="/user/as2">Profile</Link>},
@@ -88,7 +89,7 @@ useEffect(() => {
             <Link to={`/user/${currentUser?.Username}`}>Profile</Link>
             </div>
             <div onClick={()=>setShowRequestModal(true)}>Requests</div>
-            <button onClick={()=>dispatch({type:'toggleTheme'})}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>
+            <button onClick={()=>toggleTheme()}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>
             <button disabled={loggingOut} onClick={()=>refetch()}>Logout <IoIosLogOut /> </button>
             {/* <DropdownMenu menu={menu} showDropdownArg={showDropdown} onClose={()=>setShowDropdown(false)}/> */}
          </div>}

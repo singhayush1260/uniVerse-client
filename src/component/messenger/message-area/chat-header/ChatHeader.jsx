@@ -77,6 +77,7 @@ const ChatHeader = ({currentUser, currentChat, showSidebar, setShowSidebar }) =>
         {showDropdown && (
           <div className={classes.dropdown} ref={dropdownRef}>
             <button disabled={fetchingIceBreakers} onClick={()=>fetchIceBreakers()}>{fetchingIceBreakers ? <CircularLoader/>: "Get Ice Breaker"}</button>
+            <button onClick={() => leaveGroup()}>Leave</button>
             <button onClick={() => deleteGroup()}>Delete</button>
           </div>
         )}

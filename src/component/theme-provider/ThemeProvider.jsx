@@ -1,8 +1,11 @@
-import { useSelector } from "react-redux";
+import { useGeneralContext } from "../../context/GeneralContext";
 const ThemeProvider = ({ children }) => {
+  const { theme } = useGeneralContext();
 
-   const {isDarkTheme}=useSelector((state)=>state.themeReducer);
-
-  return <div className={`${isDarkTheme ? 'dark_theme' : 'light_theme'}`}>{children}</div>;
+  return (
+    <div className={`${theme === "dark" ? "dark_theme" : "light_theme"}`}>
+      {children}
+    </div>
+  );
 };
 export default ThemeProvider;

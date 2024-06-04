@@ -23,7 +23,7 @@ const Messenger = () => {
     setLoadingChatHeads(true);
     socket?.emit("get-chat-heads", { userID: currentUser?._id });
     socket?.on("chat-heads-fetched", (data) => {
-      console.log("chat heads deleted",data);
+      console.log("chat heads fetched",data);
       const transformedChatHeads = data?.populatedChatHeads?.map((ch) => {
         const newMember = ch?.Members?.filter((m) => {
           return currentUser?._id !== m?._id;

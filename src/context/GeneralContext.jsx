@@ -4,11 +4,18 @@ const GeneralContext = createContext(undefined);
 export const GeneralContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("dark");
   const [iceBreaker, setIceBreaker] = useState([]);
-
+  
+  const toggleTheme=()=>{
+    if(theme==="dark"){
+      setTheme("light");
+    }else{
+      setTheme("dark")
+    }
+  }
 
   const contextValue = {
     theme,
-    setTheme,
+    toggleTheme,
     iceBreaker,
     setIceBreaker
   };

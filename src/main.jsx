@@ -28,11 +28,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <BrowserRouter>
           <AuthContextProvider>
          <SocketContextProvider>
-         <ThemeProvider>
          <GeneralContextProvider>
-         <App/>
-         </GeneralContextProvider>
+         <ThemeProvider>
+          <App/>
          </ThemeProvider>
+         </GeneralContextProvider>
          </SocketContextProvider>
           </AuthContextProvider>
         </BrowserRouter>
