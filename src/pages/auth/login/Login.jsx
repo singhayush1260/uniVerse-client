@@ -2,7 +2,6 @@ import classes from "../AuthPage.module.scss";
 import { useState } from "react";
 import { useMutation,useQueryClient } from "react-query";
 import { useFormik } from "formik";
-import { useSelector,useDispatch } from "react-redux";
 import { Link,useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CiMail, CiLock } from "react-icons/ci";
@@ -10,17 +9,14 @@ import { BiHide, BiShow } from "react-icons/bi";
 import { login_schema } from "./login_schema";
 import { login } from "../../../api/auth";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
-import { useSocketContext } from "../../../context/SocketContext";
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const{socket}=useSocketContext();
-  const dispatch = useDispatch();
   const queryClient=useQueryClient();
   const navigate=useNavigate();
   const{mutate,isLoading,isError,error}=useMutation(login,{
     onSuccess:async(user)=>{
-      console.log("user from login",user)
       await queryClient.invalidateQueries("validateToken");
       navigate("/")
       
@@ -35,7 +31,6 @@ const Login = () => {
     validationSchema: login_schema,
     onSubmit: async (values) => {
       const { Email, Password } = values;
-      console.log(Email, Password)
       mutate({Email,Password});
     },
   });
@@ -76,13 +71,13 @@ const Login = () => {
             </div>
             {errors.Password && touched.Password && <p>{errors.Password}</p>}
           </div>
-          <div className={classes.field_group_two}>
+          {/* <div className={classes.field_group_two}>
             <div className={classes.input_controller}>
               <input type="checkbox" />
               <span>Remember me</span>
             </div>
             <Link to="#">Forgot password?</Link>
-          </div>
+          </div> */}
           { isError && <p style={{color:"red"}}>{error?.message}</p>}
           <div className={classes.field_group_one}>
             <button type="submit" disabled={isLoading}>{isLoading ? <CircularLoader borderColor={"black"}/> :"Login"}</button>

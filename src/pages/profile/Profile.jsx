@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import useUser from "../../hooks/useUser";
 import {useSocketContext} from "../../context/SocketContext"
 import { getAllPostsByUser } from "../../api/post";
-import { sendRequest as sendRequestApi } from "../../api/friend";
+import { sendRequest as sendRequestApi, removeFriend as removeFriendApi } from "../../api/friend";
 import { CiEdit } from "react-icons/ci";
 import { IoIosLock } from "react-icons/io";
 import { TfiLayoutMediaOverlay, TfiVideoClapper } from "react-icons/tfi";
@@ -43,7 +43,7 @@ const Profile = () => {
       setPostsData(data?.userPosts);
     }
   });
-  const {mutate,isLoading:sendingRequest}=useMutation(sendRequestApi,{
+  const {mutate:sendRequest,isLoading:sendingRequest}=useMutation(sendRequestApi,{
     onSuccess:()=>{
         queryClient.invalidateQueries("getOtherUser");
     },
@@ -52,29 +52,41 @@ const Profile = () => {
         position: "top-center",
         theme: "dark",
         type: "error",
-        autoClose: 3000,
+        autoClose: 2000,
+      });
+    }
+  });
+  const {mutate:removeFriend,isLoading:removingFriend}=useMutation(removeFriendApi,{
+    onSuccess:()=>{
+        queryClient.invalidateQueries("getOtherUser");
+    },
+    onError:()=>{
+      toast("Could not remove friend.", {
+        position: "top-center",
+        theme: "dark",
+        type: "error",
+        autoClose: 2000,
       });
     }
   });
 
-const sendRequest=(userId)=>{
-mutate(userId);
-}
+
 const createGroup=()=>{
   socket?.emit("create-group",{userID:currentUser?._id,memberIDs:[currentUser?._id,userId]});
   navigate("/messenger")
 }
 
-const isPrivate=false;
+
+const isPrivate=user?.isPrivateAccount || isFriend;
 if(isLoadingUser || isLoadingPosts){
   return <ProfileSkeleton/>
 }
 
-console.log("userId",userId);
-console.log("currentUser",currentUser?._id);
+// console.log("userId",userId);
+// console.log("currentUser",currentUser?._id);
 
-console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
-console.log("isFriend",isFriend)
+// console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
+// console.log("isFriend",isFriend)
   return (
     <>
       <Appbar />
@@ -84,7 +96,7 @@ console.log("isFriend",isFriend)
             <img src={COVER_FALLBACK} alt={`cover_picture_${user?.Name}`} />
             <div className={classes.profile_picture}>
               <LazyImage src={user?.Avatar || USER_FALLBACK} alt={`profile_picture_${user?.Name}`} />
-              <CiEdit onClick={()=>setShowUpdatePictureModal(true)}/>
+              {/* <CiEdit onClick={()=>setShowUpdatePictureModal(true)}/> */}
             </div>
           </div>
         </div>
@@ -95,6 +107,7 @@ console.log("isFriend",isFriend)
             <p>{user?.Bio}</p>
             {  (!(userId===currentUser?._id) && !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
            { !(userId===currentUser?._id) && <button onClick={()=>createGroup()}>Message</button>  }
+           {!(userId===currentUser?._id) && isFriend && <button onClick={()=>removeFriend(userId)}>{removingFriend ? <CircularLoader/> :"Remove Friend"}</button>}
           </div>
           <div className={classes.bottom_right}>
           {isPrivate && <div className={classes.private_account}>
@@ -134,7 +147,7 @@ console.log("isFriend",isFriend)
               {currentCarouselItem===1 && postsData?.length!==0 && postsData?.map((pd) => {
                 return (
                   <div className={classes.grid_item} key={pd?.post?.postId} onClick={()=>{setModalPost(pd)}}>
-                   {pd?.post?.Caption?.length >0 && <p >{pd?.post?.Caption?.length >60 ?pd?.post?.Caption?.substring(60) : pd?.post?.Caption}</p>}
+                   {pd?.post?.Caption?.length >0 && <p >{ pd?.post?.Caption}</p>}
                     {/* {
                       pd?.post?.MediaURLs?.length>0 && pd?.post?.MediaURLs?.map((url)=>{
                         return <div className={classes.post_image_container}>

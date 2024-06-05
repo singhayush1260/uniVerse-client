@@ -1,29 +1,31 @@
 import classes from "./Comments.module.scss";
-import { useSelector } from "react-redux";
 import Comment from "./comment/Comment";
-const Comments = ({ postId }) => {
-  const { comments } = useSelector((state) => state.commentsReducer);
+import { useQuery} from "react-query";
+import { getAllComments } from "../../api/comment";
+const Comments = ({ postId,currentUser }) => {
 
-  const rootComments = comments.filter((comment) => comment.parentId === null);
-
-  const getReplies = (parentId) => {
-    const replies = comments
-      .filter((comment) => comment.parentId === parentId)
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-    return replies;
-  };
+  const{data,isLoading,error}=useQuery(["getAllComments",postId],()=>getAllComments(postId),{
+    enabled:!!postId,
+  });
+  const rootComments = data?.comments.filter((commentData) => commentData?.comment?.Parent === null);
 
   return (
     <div className={classes.comments_wrapper}>
-      {rootComments.map((rootComment) => {
+      {isLoading && <div className={classes.loading_comments}>
+        <span>Loading comments</span>
+        </div>}
+        {
+          !isLoading && error && <div className={classes.error}>
+            Could not fetch comments
+          </div>
+        }
+      {!isLoading && rootComments?.map((rootComment) => {
         return (
           <Comment
+          postId={postId}
             key={rootComment.commentId}
             comment={rootComment}
-            replies={getReplies(rootComment.commentId)}
+            currentUser={currentUser}
           />
         );
       })}

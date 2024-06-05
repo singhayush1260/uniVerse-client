@@ -151,12 +151,17 @@
       align-items: center;
       background-color: var(--color-primary);
       border-radius: 10px;
-      padding: 1em;
-      textarea {
+      padding: 0.5em;
+      gap:10px;
+      input {
         width: 95%;
-        //padding: 1em;
         border-radius: 10px;
-        color: inherit;
+        padding: 0.6rem;
+        padding-left: 10px;
+        background-color: inherit;
+        color: var(--color-text-primary);
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+          rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
       }
       svg {
         color: var(--color-button-primary);

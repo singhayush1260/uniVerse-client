@@ -26,6 +26,7 @@ return(
             styles={{option: (provided, state) => ({
               ...provided,
               color: state.isSelected ? 'white' : 'blue',
+        
               padding: 5,
             })}}
             options={[{value:1,label:"Ayush"},{value:2,label:"Neeraj"}]}

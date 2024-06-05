@@ -26,6 +26,7 @@ const MessageItem = ({ message, currentUser }) => {
           message?.Attachments?.map((url) => {
             return (
               <div
+                key={url}
                 className={classes.image_container}
                 onClick={() => setExpandedImage(url)}
               >

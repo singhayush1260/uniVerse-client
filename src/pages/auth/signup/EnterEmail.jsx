@@ -8,7 +8,6 @@ import { useMutation } from "react-query";
 import CircularLoader from "../../../component/loaders/circular-loader/CircularLoader";
 import { toast } from "react-toastify";
 const EnterEmail = ({ setStep, setEmail }) => {
-  console.log("fsfsfsdf", setStep);
   const { mutate, isLoading, isError, error } = useMutation(getOTP, {
     onSuccess: async () => {
       // await queryClient.invalidateQueries("validateToken");
@@ -29,7 +28,6 @@ const EnterEmail = ({ setStep, setEmail }) => {
       validationSchema: email_schema,
       onSubmit: async (values) => {
         const { Email } = values;
-        console.log(Email);
         setEmail(Email);
         mutate(Email);
       },

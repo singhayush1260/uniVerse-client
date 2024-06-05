@@ -1,14 +1,11 @@
 import classes from "./Posts.module.scss";
-import { useSelector } from "react-redux";
 import Post from "./post/Post";
 import { useQuery } from "react-query";
 import { getAllPosts } from "../../api/post";
 import PostSkeleton from "../loaders/skeleton/post-skeleton/PostSkeleton";
 
 const Posts = () => {
-  //const { posts } = useSelector((state) => state.postReducer);
   const {data,isLoading,error, refetch}=useQuery("getAllPosts",getAllPosts);
-  console.log("all posts",data)
   return (
     <div className={classes.posts}>
        {isLoading && Array.from({ length: 5 }).map((_, index) => (

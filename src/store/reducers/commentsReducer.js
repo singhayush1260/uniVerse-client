@@ -86,9 +86,9 @@ const initialState={
           },
       ]   
 }
-export const commentsReducer=createReducer(initialState,{
-    toggleTheme:(state)=>{
-        state.isDarkTheme=!state.isDarkTheme
-        localStorage.setItem("isDarkTheme",state.isDarkTheme)
+export const commentsReducer=createReducer(initialState,{   
+    addComment:(state,action)=>{
+      console.log("new comment",action.payload);
+        state.comments.push(action.payload)
     }
 })

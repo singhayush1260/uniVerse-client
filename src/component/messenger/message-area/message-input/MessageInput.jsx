@@ -17,14 +17,12 @@ import { IoCloseCircle } from "react-icons/io5";
 const MessageInput = ({ currentUser, currentChat }) => {
   const [message, setMessage] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
-  const [attachments, setAttachments] = useState([]);
   const [showAttachmentUploader, setShowAttachmentUploader] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showWebcam, setShowWebcam] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
   const { socket } = useSocketContext();
-  const { setIceBreaker,theme } = useGeneralContext();
+  const { setIceBreaker, theme } = useGeneralContext();
   const containsImage = selectedImages?.length > 0;
 
   const {
@@ -33,29 +31,26 @@ const MessageInput = ({ currentUser, currentChat }) => {
     error,
   } = useCloudinary({
     onSuccess: (data) => {
-      console.log("Upload successful!", data);
       const imageUrls = data?.map((datum) => datum.url);
-      console.log("selectedImages urls", imageUrls);
       setSelectedImages([]);
       setCapturedImage(null);
       sendMessage(imageUrls);
     },
-    onError: (error) => {
-      console.log("error uploading to cloudinary", error);
-    },
+    onError: (error) => {},
   });
 
   const addSelectedImages = useCallback(
     (e) => {
+      setCapturedImage(null);
       const selectedFiles = Array.from(e.target.files);
       const totalFiles = selectedImages?.length + selectedFiles.length;
-       
-      if (totalFiles >5) {
+
+      if (totalFiles > 5) {
         const remainingSlots = 5 - selectedImages?.length;
         const filesToAdd = selectedFiles.slice(0, remainingSlots);
         setSelectedImages((prevselectedImages) => {
-          console.log("prevselectedImages",prevselectedImages);
-          return [...prevselectedImages, ...filesToAdd]});
+          return [...prevselectedImages, ...filesToAdd];
+        });
         toast("You can only upload up to 5 selectedImages.", {
           position: "top-center",
           theme: "dark",
@@ -64,8 +59,7 @@ const MessageInput = ({ currentUser, currentChat }) => {
         });
       } else {
         setSelectedImages((prevSelectedImages) => {
-          console.log("prevSelectedImages",prevSelectedImages)
-          return [...prevSelectedImages, ...selectedFiles]
+          return [...prevSelectedImages, ...selectedFiles];
         });
         setShowAttachmentUploader(false);
       }
@@ -76,24 +70,21 @@ const MessageInput = ({ currentUser, currentChat }) => {
     setSelectedImages((images) => images.filter((image) => image !== item));
   });
 
-  const createMessage=(e)=>{
+  const createMessage = (e) => {
     e.preventDefault();
-    if(capturedImage){
-      upload([capturedImage])
-      //console.log("[capturedImage||[...selectedImages]]",[capturedImage||[...selectedImages]])
-    }
-    else if(selectedImages.length>0){
+    if (capturedImage) {
+      upload([capturedImage]);
+    } else if (selectedImages.length > 0) {
       upload(selectedImages);
+    } else {
+      sendMessage(undefined);
     }
-    else{
-     sendMessage(undefined);
-    }
-  }
+  };
 
   const sendMessage = (attachments) => {
-    if (message.length > 0||attachments) {
+    if (message.length > 0 || attachments) {
       socket?.emit("send-message", {
-        message: attachments ?undefined:message,
+        message: attachments ? undefined : message,
         userID: currentUser?._id,
         attachments,
         groupID: currentChat?._id,
@@ -107,9 +98,14 @@ const MessageInput = ({ currentUser, currentChat }) => {
 
   return (
     <>
-      <form className={classes.message_input} onSubmit={(e) => createMessage(e)}>
-        {(containsImage || capturedImage) && <div className={classes.media_preview}>
-        { selectedImages && selectedImages?.map((image) => {
+      <form
+        className={classes.message_input}
+        onSubmit={(e) => createMessage(e)}
+      >
+        {(containsImage || capturedImage) && (
+          <div className={classes.media_preview}>
+            {selectedImages &&
+              selectedImages?.map((image) => {
                 return (
                   <div className={classes.image_container}>
                     <LazyImage src={URL.createObjectURL(image)} alt="image" />
@@ -117,13 +113,14 @@ const MessageInput = ({ currentUser, currentChat }) => {
                   </div>
                 );
               })}
-              {capturedImage && (
-                <div className={classes.image_container}>
-                  <LazyImage src={capturedImage} alt="image" />
-                  <IoCloseCircle onClick={() => setCapturedImage(null)} />
-                </div>
-              )}
-        </div>}
+            {capturedImage && (
+              <div className={classes.image_container}>
+                <LazyImage src={capturedImage} alt="image" />
+                <IoCloseCircle onClick={() => setCapturedImage(null)} />
+              </div>
+            )}
+          </div>
+        )}
         {showEmojiPicker && (
           <div className={classes.emoji_picker}>
             <EmojiPicker
@@ -139,10 +136,19 @@ const MessageInput = ({ currentUser, currentChat }) => {
           </div>
         )}
         {showEmojiPicker && (
-          <IoCloseCircleSharp onClick={() => { setShowEmojiPicker(false)}} />
+          <IoCloseCircleSharp
+            onClick={() => {
+              setShowEmojiPicker(false);
+            }}
+          />
         )}
         {!showEmojiPicker && (
-          <BsEmojiSmile onClick={() => {setShowAttachmentUploader(false); setShowEmojiPicker(true)}} />
+          <BsEmojiSmile
+            onClick={() => {
+              setShowAttachmentUploader(false);
+              setShowEmojiPicker(true);
+            }}
+          />
         )}
 
         <div className={classes.attachment_container}>
@@ -153,7 +159,10 @@ const MessageInput = ({ currentUser, currentChat }) => {
           )}
           {!showAttachmentUploader && (
             <CgAttachment
-              onClick={() => {setShowEmojiPicker(false); setShowAttachmentUploader(!showAttachmentUploader)}}
+              onClick={() => {
+                setShowEmojiPicker(false);
+                setShowAttachmentUploader(!showAttachmentUploader);
+              }}
             />
           )}
           {showAttachmentUploader && (
@@ -164,7 +173,12 @@ const MessageInput = ({ currentUser, currentChat }) => {
               transition={{ duration: 0.5 }}
               className={classes.attachment_picker}
             >
-              <label onClick={() => {setSelectedImages([]); setShowWebcam(true)}}>
+              <label
+                onClick={() => {
+                  setSelectedImages([]);
+                  setShowWebcam(true);
+                }}
+              >
                 Camera <BsCameraFill />
               </label>
               <label htmlFor="image picker">
@@ -193,8 +207,11 @@ const MessageInput = ({ currentUser, currentChat }) => {
           <WebcamCapture
             setCapturedImage={setCapturedImage}
             setShowWebcam={setShowWebcam}
-            closeMenu={()=>setShowAttachmentUploader(false)}
-            onCapture={(result)=>{setCapturedImage(result); setShowWebcam(false)}}
+            closeMenu={() => setShowAttachmentUploader(false)}
+            onCapture={(result) => {
+              setCapturedImage(result);
+              setShowWebcam(false);
+            }}
           />
         </Modal>
       )}

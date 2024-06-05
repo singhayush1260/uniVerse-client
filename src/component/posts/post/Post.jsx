@@ -8,7 +8,6 @@ import { PiShareFat } from "react-icons/pi";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { LiaHeartSolid } from "react-icons/lia";
 import { FaRegCommentDots } from "react-icons/fa";
-import { BsEmojiSmile } from "react-icons/bs";
 import {
   deletePost as deletePostApi,
   updatePost as updatePostApi,
@@ -20,10 +19,10 @@ import Comments from "../../comments/Comments";
 import SocialShare from "../../widgets/social-share/SocialShare";
 import USER_FALLBACK from "../../../assets/images/dummy_user.png";
 import Reaction from "../../widgets/reaction/Reaction";
-import DropdownMenu from "../../dropdown-menu/DropdownMenu";
 import { getReaction } from "../../../api/react";
 import {motion} from "framer-motion";
 import ImageSlider from "../../image-slider/ImageSlider";
+import AddComment from "../../comments/add-comment/AddComment";
 
 const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, timestamp }) => {
   const[images,setImages]=useState(mediaUrls);
@@ -35,9 +34,10 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
   const [showTextArea, setShowTextArea] = useState(false);
   const [updatedCaption, setUpdatedCaption] = useState(caption ||"");
   const[reaction,setReaction]=useState("");
-  const {user}=useUser();
   const dropdownRef = useRef();
+  const {user}=useUser();
   const queryClient = useQueryClient();
+
 
   const{data,isLoading:isReacting,error}=useQuery(["getPostReaction",postId],()=>getReaction(postId),{
     enabled:!!postId,
@@ -46,7 +46,6 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
     }
   });
 
-  //console.log("reaction in a post",data);
 
   const {
     mutate: deletePost,
@@ -56,7 +55,6 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
       await queryClient.invalidateQueries("getAllPosts");
     },
     onError: (error) => {
-      console.log("delete post error", error);
       toast("Error deleting post!",{
         position:"top-center",
         theme:"dark",
@@ -84,8 +82,7 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
        })
     },
   });
-
-//console.log("images from post",images);
+ 
 
   useEffect(() => {
     const clickOutside = (e) => {
@@ -150,19 +147,8 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
         { showTextArea && <button onClick={()=>updatePost({postId,updatedCaption})}>Done</button>}
        </div>
       </div>
-      <div className={classes.add_comment}>
-        <div className={classes.image_container}>
-          <img
-            src={USER_FALLBACK}
-            alt="current_user"
-          />
-        </div>
-        <div className={classes.input_controller}>
-          <textarea cols="30" rows="1" placeholder="Write a comment!" />
-          <BsEmojiSmile />
-        </div>
-      </div>
-      {showComments && <Comments postId={postId} />}
+      <AddComment currentUser={user} postId={postId} expandComments={()=>setShowComments(true)}/>
+      {showComments && <Comments postId={postId} currentUser={user} />}
       {showShareModal && <Modal isOpened={showShareModal} onClose={()=>setShowShareModal(false)}><SocialShare/> </Modal> }
     </motion.div>
   );
