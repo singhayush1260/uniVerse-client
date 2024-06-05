@@ -65,3 +65,16 @@ export const getAllRequests = async () => {
           }
           return body;
         }
+
+        export const getFriends = async () => {
+          console.log("get All freins")
+          const response = await fetch(`${API_BASE_URL}/api/friend`, {
+            credentials: "include",
+          });
+          if (!response.ok) {
+            throw new Error("Error getting  all friemds");
+          }
+          const body=await response.json();
+          console.log("friends response body",body)
+          return body;
+        };

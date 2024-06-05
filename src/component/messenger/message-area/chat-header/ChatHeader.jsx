@@ -52,17 +52,16 @@ const ChatHeader = ({currentUser, currentChat, showSidebar, setShowSidebar }) =>
   }, []);
 
   const deleteGroup = useCallback(() => {
-    console.log("delete group method call")
     socket?.emit("delete-group",{userID:currentUser?._id,groupID:currentChat?._id});
    },[socket,currentChat,currentUser]);
  
   return (
     <div className={classes.chat_header}>
-      {!showSidebar && (
+      {/* {!showSidebar && (
         <button className={classes.sidebar_button} onClick={() => setShowSidebar()}>
           <IoIosArrowForward />
         </button>
-      )}
+      )} */}
       <div className={classes.user_detail}>
         <div className={classes.image_container}>
           <LazyImage src={currentChat?.Members[0]?.Avatar} />

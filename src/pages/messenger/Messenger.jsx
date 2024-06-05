@@ -11,6 +11,7 @@ import { useSocketContext } from "../../context/SocketContext";
 import useUser from "../../hooks/useUser";
 import { IoIosChatboxes } from "react-icons/io";
 import { useGeneralContext } from "../../context/GeneralContext";
+import { IoIosArrowForward } from "react-icons/io";
 const Messenger = () => {
   const [loadingChatHeads, setLoadingChatHeads] = useState(false);
   const [currentChat, setCurrentChat] = useState(null);
@@ -41,6 +42,8 @@ const Messenger = () => {
       community: currentUser?.Community,
     });
   }, []);
+
+  console.log("show sidebar",showSidebar);
   return (
     <>
       <Appbar />
@@ -53,17 +56,22 @@ const Messenger = () => {
                 chatHeads={chatHeads}
                 setCurrentChat={setCurrentChat}
                 currentChat={currentChat}
+                closeSidebar={()=>setShowSidebar(false)}
               />
             </div>
             <div className={classes.message_area}>
+             {!showSidebar && <button className={classes.show_sidebar_button} onClick={()=>setShowSidebar(true)}>
+                <IoIosArrowForward/>
+              </button>}
               <AnimatePresence>
                 {showSidebar && (
-                  <MobileSidebar onClose={() => setShowSidebar(false)}>
+                  <MobileSidebar onClose={()=>setShowSidebar(false)}>
                     <ChatHeads
                       isLoading={loadingChatHeads}
                       chatHeads={chatHeads}
                       setCurrentChat={setCurrentChat}
                       currentChat={currentChat}
+                      closeSidebar={()=>setShowSidebar(false)}
                     />
                   </MobileSidebar>
                 )}

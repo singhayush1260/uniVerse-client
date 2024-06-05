@@ -36,6 +36,18 @@
     border-radius: 5px;
     background-color: var(--color-secondary);
     position: relative;
+    .show_sidebar_button{
+      position: absolute;
+      left: -10px;
+      top:5em;
+      width: max-content;
+        padding: 2px 5px;
+        background-color: var(--color-primary);
+          color: var(--color-button-primary);
+          border: 1px solid var(--color-button-primary);
+          display: none;
+          z-index: 999;
+    }
 
   }
   .sidebar_button {
@@ -58,9 +70,10 @@
     }
     .message_area {
       width: 100%;
+      .show_sidebar_button {
+        display: block;
+      }
     }
-    .sidebar_button {
-      display: block;
-    }
+    
   }
 }

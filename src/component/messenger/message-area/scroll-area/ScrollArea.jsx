@@ -35,6 +35,7 @@ const ScrollArea = ({ currentUser, currentChat }) => {
     };
 
     const handleMessageReceived = (data) => {
+      console.log("received message",data)
       const isMessageExists = messages.some(
         (message) => message._id === data?.messageDoc?._id
       );

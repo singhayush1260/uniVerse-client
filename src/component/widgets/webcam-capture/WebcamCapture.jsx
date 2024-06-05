@@ -2,7 +2,7 @@ import classes from "./WebcamCapture.module.scss";
 import { useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 
-const WebcamCapture = ({setCapturedImage,setShowWebcam}) => {
+const WebcamCapture = ({setCapturedImage,setShowWebcam, closeMenu}) => {
   const webcamRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
 
@@ -11,6 +11,7 @@ const WebcamCapture = ({setCapturedImage,setShowWebcam}) => {
     setImageSrc(imageSrc);
     setCapturedImage(imageSrc);
     setShowWebcam(false);
+    closeMenu();
   };
 
   return (

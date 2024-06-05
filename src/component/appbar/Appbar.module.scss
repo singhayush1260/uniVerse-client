@@ -102,16 +102,24 @@ z-index: 9999999;
     padding: 1rem 1rem;
     gap: 20px;
     .logo_and_search {
-      display: none;
+      h1{
+        display: none;
+      }
+      input{
+        width: 12em;
+      }
     }
     nav {
       margin-right: 0;
-      gap: 2rem;
+      gap: 1rem;
     }
     .user_menu {
       padding: 2px 5px;
       span {
         display: none;
+      }
+      .dropdown_menu_container{
+        right: 90%;
       }
     }
   }
@@ -120,7 +128,7 @@ z-index: 9999999;
   .appbar {
     .logo_and_search {
       input {
-        display: none;
+        //display: none;
       }
     }
     nav {

@@ -95,6 +95,12 @@
     }
   }
 }
+@media (min-width: 320px) and (max-width: 860px) {
+  .friend_requests{
+    width: 80vw;
+    height: 70vh;
+  }
+}
 @keyframes skeleton-loading {
   0% {
     background-color: hsl(0, 0%, 17%);

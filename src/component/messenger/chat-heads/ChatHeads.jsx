@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import Modal from "../../modal/Modal";
 import CreateGroup from "../create-group/CreateGroup";
 import { MdOutlineGroupAdd } from "react-icons/md";
-const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading }) => {
+const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading, closeSidebar }) => {
 
 const[showModal,setShowModal]=useState(false);
 
@@ -24,7 +24,7 @@ const[showModal,setShowModal]=useState(false);
         className={`${classes.chat_head} ${
           currentChat?._id === chatHead?._id && classes.current_chat
         }`}
-        onClick={() => setCurrentChat(chatHead)}
+        onClick={() =>{setCurrentChat(chatHead); closeSidebar()}}
       >
         <div className={classes.image_container}>
           <LazyImage src={chatHead?.Members[0]?.Avatar || USER_FALLBACK} />
@@ -64,7 +64,7 @@ const[showModal,setShowModal]=useState(false);
           return <ChatHeadItem key={chatHead?._id} chatHead={chatHead} />;
         })}
     </div>
-    <Modal isOpened={showModal} onClose={()=>setShowModal(false)}><CreateGroup/> </Modal>
+   {showModal && <Modal isOpened={showModal} onClose={()=>setShowModal(false)}><CreateGroup/> </Modal>}
     </>
   );
 };

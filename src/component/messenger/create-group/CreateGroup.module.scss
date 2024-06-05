@@ -1,13 +1,24 @@
 .create_group{
-    background-color: red;
     width: 35vw;
-    height:50vh ;
     padding: 1.5em;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap:0.5em;
-    .input_controller {
+    background-color: var(--color-primary);
+    border:1px solid rgb(58, 58, 58);
+    border-radius: 10px;
+    z-index: 99999999999;
+    h4{
+      color: var(--color-text-primary);
+    }
+    .field_group_one {
+      width: 90%;
+      label {
+        font-size: 0.7em;
+        font-weight: bold;
+      }
+      .input_controller {
         width: 100%;
         display: flex;
         align-items: center;
@@ -34,4 +45,33 @@
         }
       }
 
+      .link {
+        text-align: left;
+        font-size: 0.7em;
+        a {
+          color: var(--color-button-primary);
+          cursor: pointer;
+        }
+      }
+      button {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: none;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        background-color: var(--color-button-primary);
+        color: var(--color-primary);
+        cursor: pointer;
+        margin-top: 20px;
+        //clip-path: polygon(20% 0%, 100% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 100%, 0% 20%);
+      }
+    }
+}
+@media (min-width: 320px) and (max-width: 786px) {
+ .create_group{
+  width: 80vw;
+ }
 }

@@ -69,9 +69,9 @@ if(isLoadingUser || isLoadingPosts){
   return <ProfileSkeleton/>
 }
 
-// console.log("userId",userId);
-// console.log("currentUser",currentUser?._id);
-// console.log("!userId===currentUser?._id",!(userId===currentUser?._id));
+console.log("userId",userId);
+console.log("currentUser",currentUser?._id);
+console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
   return (
     <>
       <Appbar />
@@ -90,7 +90,7 @@ if(isLoadingUser || isLoadingPosts){
             <h2>{user?.Name}</h2>
             <span>@{user?.Username}</span>
             <p>{user?.Bio}</p>
-            {  (!userId===currentUser?._id || !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
+            {  !(userId==currentUser?._id && !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
            { !(userId===currentUser?._id) && <button onClick={()=>createGroup()}>Message</button>  }
           </div>
           <div className={classes.bottom_right}>

@@ -9,6 +9,7 @@ import UserList from "../../component/widgets/user-list/UserList";
 import classes from "./Home.module.scss";
 import Appbar from "../../component/appbar/Appbar";
 import { getAllCommunityUsers } from "../../api/user";
+import { getFriends } from "../../api/friend";
 import useUser from "../../hooks/useUser";
 import { useSocketContext } from "../../context/SocketContext";
 
@@ -20,6 +21,10 @@ const Home = () => {
 
   const{data,isLoading,error}=useQuery("getAllCommunityUsers",getAllCommunityUsers);
 
+  const{data:friends,isLoading:isFriendsLoading,error:friendsError}=useQuery("getFriends",getFriends);
+
+  console.log("friendssssssssssssssss",friends)
+
  
   return (
     <>
@@ -27,7 +32,7 @@ const Home = () => {
       <main className={classes.page_wrapper}>
         <div className={classes.left_sidebar}>
           <ProfileOverview />
-          <MyFriends />
+          <UserList heading="Friends" users={friends?.populatedFriends} isLoading={isFriendsLoading}/>
         </div>
         <div className={classes.timeline}>
           {/* <Stories /> */}

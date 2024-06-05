@@ -1,18 +1,19 @@
 .mobile_sidebar{
-    width: 60vw;
+    width: 45vw;
     height: 100%;
     background-color: var(--color-primary);
     position: absolute;
     left: 0;
     top:0;
-    z-index: 9999999;
+    z-index: 9;
     button {
         position: absolute;
-        left: 55vw;
+        left: 42vw;
         top:38vh;
         padding: 2px;
         background-color: var(--color-primary);
           color: var(--color-button-primary);
           border: 1px solid var(--color-button-primary);
+          z-index: 999;
       }
 }

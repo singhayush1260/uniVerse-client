@@ -1,22 +1,20 @@
 import classes from './Appbar.module.scss';
-import { AiOutlineMessage, AiFillCaretDown, AiFillCaretUp, AiOutlineSetting, AiOutlineSearch } from "react-icons/ai";
-import { IoMdNotificationsOutline, IoIosLogOut, IoIosHeartEmpty } from "react-icons/io";
-import { GoHomeFill } from "react-icons/go";
-import { CiLight, CiDark } from "react-icons/ci";
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState,useRef,useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {useQuery} from "react-query";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {useQuery, useQueryClient} from "react-query";
+import {toast} from "react-toastify";
+import { useGeneralContext } from '../../context/GeneralContext';
+import useUser from '../../hooks/useUser';
 import { logout } from '../../api/auth';
-import { useQueryClient } from "react-query";
 import CircularLoader from '../loaders/circular-loader/CircularLoader';
 import SearchUser from '../widgets/search-user/SearchUser';
-import DropdownMenu from '../dropdown-menu/DropdownMenu';
 import Modal from '../modal/Modal';
 import FriendRequests from '../friend-requests/FriendRequests';
-import useUser from '../../hooks/useUser';
 import USER_FALLBACK from "../../assets/images/dummy_user.png"
-import { useGeneralContext } from '../../context/GeneralContext';
+import { AiOutlineMessage, AiFillCaretDown, AiFillCaretUp, AiOutlineSetting, AiOutlineSearch } from "react-icons/ai";
+import { IoMdNotificationsOutline, IoIosLogOut, IoIosHeartEmpty,IoMdSearch } from "react-icons/io";
+import { GoHomeFill } from "react-icons/go";
+import { CiLight, CiDark } from "react-icons/ci";
 const Appbar = () => {
    const dropdownRef = useRef();
    const queryClient=useQueryClient();
@@ -27,29 +25,27 @@ const Appbar = () => {
    const{ refetch, isLoading:loggingOut,isError,error}=useQuery("logout",logout,{
       enabled:false,
       onSuccess:async()=>{
-           console.log("logout success")
            navigate("/login");
            await queryClient.invalidateQueries("validateToken");
            queryClient.removeQueries({ queryKey: "validateToken" });
            //dispatch({type:'logout'})
       },
       onError:()=>{
-  
+        toast("Error creating post.", {
+          position: "top-center",
+          theme: "dark",
+          type: "error",
+          autoClose: 3000,
+        });
       }
     });
    const location = useLocation();
    
    const pathname = location.pathname;
    
-   const dispatch=useDispatch();
-   const {isDarkTheme}=useSelector((state)=>state.themeReducer);
-   const{toggleTheme}=useGeneralContext();
+   const{theme,toggleTheme}=useGeneralContext();
 
-   const menu=[{_id:1,body:<Link to="/settings">Setting</Link>},
-{_id:2,body:<Link to="/user/as2">Profile</Link>},
-{_id:3,body:<div onClick={()=>setShowRequestModal(true)}>Requests</div>},
-{_id:4,body:<button onClick={()=>dispatch({type:'toggleTheme'})}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>},
-{_id:5,body:<button onClick={()=>refetch()}>Logout <IoIosLogOut /> </button>}]
+   
 
 useEffect(() => {
    const clickOutside = (e) => {
@@ -86,10 +82,10 @@ useEffect(() => {
            <Link to="/settings">Setting</Link>
            </div>
             <div>
-            <Link to={`/user/${currentUser?.Username}`}>Profile</Link>
+            <div onClick={()=>navigate(`/user/${currentUser?.Username}`, { state: { user:currentUser } })}>Profile</div>
             </div>
             <div onClick={()=>setShowRequestModal(true)}>Requests</div>
-            <button onClick={()=>toggleTheme()}>{isDarkTheme ? <CiLight/> : <CiDark/>}</button>
+            <button onClick={()=>toggleTheme()}>{theme==="light" ? <CiLight/> : <CiDark/>}</button>
             <button disabled={loggingOut} onClick={()=>refetch()}>Logout <IoIosLogOut /> </button>
             {/* <DropdownMenu menu={menu} showDropdownArg={showDropdown} onClose={()=>setShowDropdown(false)}/> */}
          </div>}
