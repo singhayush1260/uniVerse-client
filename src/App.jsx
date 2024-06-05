@@ -11,6 +11,7 @@ const Login = lazy(() => import("./pages/auth/login/Login"));
 const Likes = lazy(() => import("./pages/likes/Likes"));
 const Notification = lazy(() => import("./pages/notification/Notification"));
 const Profile = lazy(() => import("./pages/profile/Profile"));
+const Post=lazy(() => import("./pages/post/Post"));
 const Setting = lazy(() => import("./pages/setting/Setting"));
 
 import SuspenseFallback from "./component/loaders/suspense-fallback/SuspenseFallback";
@@ -49,6 +50,10 @@ const App = () => {
           <Route
             path="/user/:userId"
             element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/post/:postId"
+            element={isLoggedIn ? <Post /> : <Navigate to="/login" />}
           />
           <Route
             path="/settings"

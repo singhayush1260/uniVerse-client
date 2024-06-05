@@ -23,7 +23,12 @@ const Home = () => {
 
   const{data:friends,isLoading:isFriendsLoading,error:friendsError}=useQuery("getFriends",getFriends);
 
-  console.log("friendssssssssssssssss",friends)
+  const friendsList=friends?.populatedFriends?.map((friend)=>{
+    if(friend?.Recipient?._id!==currentUser?._id){
+      return friend?.Recipient;
+    }
+    return friend?.Requester
+  })
 
  
   return (
@@ -32,7 +37,7 @@ const Home = () => {
       <main className={classes.page_wrapper}>
         <div className={classes.left_sidebar}>
           <ProfileOverview />
-          <UserList heading="Friends" users={friends?.populatedFriends} isLoading={isFriendsLoading}/>
+          <UserList heading="Friends" users={friendsList} isLoading={isFriendsLoading}/>
         </div>
         <div className={classes.timeline}>
           {/* <Stories /> */}

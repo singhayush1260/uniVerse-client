@@ -79,7 +79,7 @@ const Login = () => {
           <div className={classes.field_group_two}>
             <div className={classes.input_controller}>
               <input type="checkbox" />
-              <span>Remmember me</span>
+              <span>Remember me</span>
             </div>
             <Link to="#">Forgot password?</Link>
           </div>

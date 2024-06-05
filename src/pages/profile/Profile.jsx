@@ -19,6 +19,7 @@ import CircularLoader from "../../component/loaders/circular-loader/CircularLoad
 import USER_FALLBACK from "../../assets/images/dummy_user.png";
 import COVER_FALLBACK from "../../assets/images/dummy_cover.png";
 import ProfileSkeleton from "./ProfileSkeleton";
+import ImageSlider from "../../component/image-slider/ImageSlider";
 
 const Profile = () => {
   
@@ -71,7 +72,9 @@ if(isLoadingUser || isLoadingPosts){
 
 console.log("userId",userId);
 console.log("currentUser",currentUser?._id);
+
 console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
+console.log("isFriend",isFriend)
   return (
     <>
       <Appbar />
@@ -90,7 +93,7 @@ console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
             <h2>{user?.Name}</h2>
             <span>@{user?.Username}</span>
             <p>{user?.Bio}</p>
-            {  !(userId==currentUser?._id && !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
+            {  (!(userId===currentUser?._id) && !isFriend) && <button onClick={()=>sendRequest(userId)}>{sendingRequest ? <CircularLoader/> :isRequestSent ?"Request Sent" :"Add Friend"}</button>}
            { !(userId===currentUser?._id) && <button onClick={()=>createGroup()}>Message</button>  }
           </div>
           <div className={classes.bottom_right}>
@@ -131,15 +134,21 @@ console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
               {currentCarouselItem===1 && postsData?.length!==0 && postsData?.map((pd) => {
                 return (
                   <div className={classes.grid_item} key={pd?.post?.postId} onClick={()=>{setModalPost(pd)}}>
-                    <p>{ pd?.post.Caption?.length>80 ? pd?.post?.Caption?.slice(0,60)+"...":pd?.post?.Caption}</p>
-                    {
+                   {pd?.post?.Caption?.length >0 && <p >{pd?.post?.Caption?.length >60 ?pd?.post?.Caption?.substring(60) : pd?.post?.Caption}</p>}
+                    {/* {
                       pd?.post?.MediaURLs?.length>0 && pd?.post?.MediaURLs?.map((url)=>{
                         return <div className={classes.post_image_container}>
                           <LazyImage src={url}
                         alt={`${pd?.post?.userId}-${pd?.post?.postId}`} />
                         </div>
                       })
-                    }
+                    } */}
+                    <div className={classes.post_image_container}>
+                          <LazyImage src={pd?.post?.MediaURLs[0]}
+                        alt={`${pd?.post?.userId}-${pd?.post?.postId}`} />
+                     { pd?.post?.MediaURLs?.length >1 &&  <div className={classes.image_overlay}>{pd?.post?.MediaURLs?.length}</div>}
+                        </div>
+                    {/* <ImageSlider images={pd?.post?.MediaURLs}/> */}
                   </div>
                 );
               })}
@@ -156,7 +165,7 @@ console.log("!(userId===currentUser?._id)",!(userId===currentUser?._id));
             userName={modalPost?.user?.Username}
             userId={currentUser?._id}
             caption={modalPost?.post?.Caption}
-            image={modalPost?.post?.MediaURLs[0]}
+            mediaUrls={modalPost?.post?.MediaURLs}
             timestamp={new Date(modalPost?.post?.createdAt)}
           />
         </Modal>}

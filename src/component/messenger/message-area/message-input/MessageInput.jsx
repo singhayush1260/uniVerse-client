@@ -63,7 +63,10 @@ const MessageInput = ({ currentUser, currentChat }) => {
           autoClose: 3000,
         });
       } else {
-        setSelectedImages((prevselectedImages) => [...prevselectedImages, ...selectedFiles]);
+        setSelectedImages((prevSelectedImages) => {
+          console.log("prevSelectedImages",prevSelectedImages)
+          return [...prevSelectedImages, ...selectedFiles]
+        });
         setShowAttachmentUploader(false);
       }
     },
@@ -97,6 +100,7 @@ const MessageInput = ({ currentUser, currentChat }) => {
       });
       setMessage("");
       setIceBreaker([]);
+      socket?.emit("get-chat-heads", { userID: currentUser?._id });
     }
     setShowEmojiPicker(false);
   };
@@ -160,7 +164,7 @@ const MessageInput = ({ currentUser, currentChat }) => {
               transition={{ duration: 0.5 }}
               className={classes.attachment_picker}
             >
-              <label onClick={() => {setSelectedImages(null); setShowWebcam(true)}}>
+              <label onClick={() => {setSelectedImages([]); setShowWebcam(true)}}>
                 Camera <BsCameraFill />
               </label>
               <label htmlFor="image picker">
@@ -190,6 +194,7 @@ const MessageInput = ({ currentUser, currentChat }) => {
             setCapturedImage={setCapturedImage}
             setShowWebcam={setShowWebcam}
             closeMenu={()=>setShowAttachmentUploader(false)}
+            onCapture={(result)=>{setCapturedImage(result); setShowWebcam(false)}}
           />
         </Modal>
       )}

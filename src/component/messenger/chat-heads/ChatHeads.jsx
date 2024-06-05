@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import Modal from "../../modal/Modal";
 import CreateGroup from "../create-group/CreateGroup";
 import { MdOutlineGroupAdd } from "react-icons/md";
+import { FaUserFriends } from "react-icons/fa";
 const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading, closeSidebar }) => {
 
 const[showModal,setShowModal]=useState(false);
@@ -46,6 +47,10 @@ const[showModal,setShowModal]=useState(false);
       <div className={classes.create_group_button} onClick={()=>setShowModal(true)}>
         <MdOutlineGroupAdd/>
       </div>
+      {!isLoading && chatHeads?.length===0 && <div className={classes.no_chat_present}>
+        <FaUserFriends/>
+        Talk to your friends now
+        </div>}
       {isLoading &&
         Array.from({ length: 4 }).map((i) => {
           return (

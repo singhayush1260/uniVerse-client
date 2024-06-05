@@ -23,6 +23,7 @@ const AddPost = ({ currentUser }) => {
 
   const addImages = useCallback(
     (e) => {
+      setCapturedImage(null)
       const selectedFiles = Array.from(e.target.files);
       const totalFiles = images?.length + selectedFiles.length;
 
@@ -90,8 +91,14 @@ const AddPost = ({ currentUser }) => {
     if (images?.length > 0) {
       upload(images);
     }
-    if (capturedImage) {
+    else if (capturedImage) {
       upload([capturedImage]);
+    }
+    else{
+     if(caption.length>0){
+      console.log("just caption")
+      createPost({ caption });
+     }
     }
   };
   return (
@@ -154,6 +161,7 @@ const AddPost = ({ currentUser }) => {
           <Modal isOpened={showWebcam}>
             <WebcamCapture
               setCapturedImage={setCapturedImage}
+              onCapture={(result)=>{setImages([]);setCapturedImage(result)}}
               setShowWebcam={setShowWebcam}
             />
           </Modal>

@@ -2,14 +2,15 @@ import classes from "./WebcamCapture.module.scss";
 import { useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 
-const WebcamCapture = ({setCapturedImage,setShowWebcam, closeMenu}) => {
+const WebcamCapture = ({setCapturedImage,setShowWebcam, closeMenu, onCapture}) => {
   const webcamRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
 
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImageSrc(imageSrc);
-    setCapturedImage(imageSrc);
+    //setCapturedImage(imageSrc);
+    onCapture(imageSrc)
     setShowWebcam(false);
     closeMenu();
   };

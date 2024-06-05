@@ -9,6 +9,19 @@
     overflow-y: scroll;
     padding: 1em 0;
     position:relative;
+    .no_chat_present{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-button-primary);
+      svg{
+        font-size: 2em;
+        margin-bottom: 0.5em;
+      }
+    }
     .create_group_button{
       position: absolute;
       width: 2em;

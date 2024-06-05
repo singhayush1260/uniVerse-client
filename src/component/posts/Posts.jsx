@@ -8,7 +8,7 @@ import PostSkeleton from "../loaders/skeleton/post-skeleton/PostSkeleton";
 const Posts = () => {
   //const { posts } = useSelector((state) => state.postReducer);
   const {data,isLoading,error, refetch}=useQuery("getAllPosts",getAllPosts);
-  //console.log("all posts",data)
+  console.log("all posts",data)
   return (
     <div className={classes.posts}>
        {isLoading && Array.from({ length: 5 }).map((_, index) => (

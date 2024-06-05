@@ -28,6 +28,7 @@ import ImageSlider from "../../image-slider/ImageSlider";
 const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, timestamp }) => {
   const[images,setImages]=useState(mediaUrls);
   const [showComments, setShowComments] = useState(false);
+  const [showFullCaption, setShowFullCaption] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -84,7 +85,7 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
     },
   });
 
-
+//console.log("images from post",images);
 
   useEffect(() => {
     const clickOutside = (e) => {
@@ -127,9 +128,11 @@ const Post = ({ name, userName, userId, userAvatar, postId, caption, mediaUrls, 
           </div>
         )}
       </div>
-      {!showTextArea && <p className={classes.caption}>{caption}</p>}
+      {!showTextArea && <p className={classes.caption} style={!showFullCaption ? {textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}:{}}>{caption}</p>}
+     { !showFullCaption && <small onClick={()=>setShowFullCaption(true)}>show more</small>}
+     {showFullCaption && <small onClick={()=>setShowFullCaption(false)}>show less</small>}
       {showTextArea && <textarea autoFocus cols="30" rows="1" className={classes.update_caption} value={updatedCaption} onChange={(e)=>setUpdatedCaption(e.target.value)}  />}
-    {images &&  <div className={classes.post_image}>
+    {images?.length >0 &&  <div className={classes.post_image}>
        {/* {images.map((image)=> <LazyImage src={image} />)} */}
        <ImageSlider images={images}/>
       </div>}

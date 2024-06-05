@@ -12,6 +12,7 @@ const UserList = ({ heading, users, isLoading }) => {
       <h4>{heading}</h4>
       <div style={{ paddingBottom: "0.5em" }} />
       <div className={classes.user_list}>
+       
         {isLoading &&
           Array.from({ length: 5 }).map((i) => {
             return (
@@ -24,7 +25,10 @@ const UserList = ({ heading, users, isLoading }) => {
               </div>
             );
           })}
-        {!isLoading &&
+           {users?.length===0 && <div className={classes.no_users}>
+            {`No ${heading}`}
+            </div>}
+        {!isLoading && users?.length>0 &&
           filteredUsers?.map((user) => {
             return (
               <div
