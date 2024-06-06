@@ -76,6 +76,21 @@ const createGroup=()=>{
   navigate("/messenger")
 }
 
+// let showPosts;
+// if(isFriend){
+//   showPosts=true;
+// }
+// else{
+//   if(user?.isPrivateAccount){
+//     showPosts=false;
+//   }
+//   else{
+//     showPosts=true;
+//   }
+// }
+
+const showPosts=isFriend ? true : (user?.isPrivateAccount ? false :true);
+
 console.log("is friend",isFriend)
 const isPublic=isFriend || user?.isPrivateAccount;
 if(isLoadingUser || isLoadingPosts){
@@ -110,7 +125,7 @@ console.log("user",user);
            {!(userId===currentUser?._id) && isFriend && <button onClick={()=>removeFriend(userId)}>{removingFriend ? <CircularLoader/> :"Remove Friend"}</button>}
           </div>
           <div className={classes.bottom_right}>
-          {!isPublic && <div className={classes.private_account}>
+          {!showPosts && <div className={classes.private_account}>
             <section>
             <IoIosLock/>
             <div>Account is private.</div>
@@ -118,7 +133,7 @@ console.log("user",user);
             </section>
             </div>
       }
-          {isPublic && <>
+          {showPosts && <>
           <div className={classes.bottom_right_appbar}>
               <div className={classes.carousal_controller}>
                 <div className={currentCarouselItem===1 && classes.current_carousal_item} onClick={()=>setCurrentCarouselItem(1)}>
