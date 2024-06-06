@@ -44,9 +44,9 @@ const[showModal,setShowModal]=useState(false);
   return (
     <>
     <div className={classes.chat_heads_list}>
-      <div className={classes.create_group_button} onClick={()=>setShowModal(true)}>
+      {/* <div className={classes.create_group_button} onClick={()=>setShowModal(true)}>
         <MdOutlineGroupAdd/>
-      </div>
+      </div> */}
       {!isLoading && chatHeads?.length===0 && <div className={classes.no_chat_present}>
         <FaUserFriends/>
         Talk to your friends now

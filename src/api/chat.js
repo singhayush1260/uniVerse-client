@@ -11,6 +11,7 @@ export const getAllChatHeads = async () => {
 };
 
 export const getIceBreaker = async (userId) => {
+  //console.log("ice breaker",userId);
   const response = await fetch(
     `${API_BASE_URL}/api/chat/one-liners/${userId}`,
     {
