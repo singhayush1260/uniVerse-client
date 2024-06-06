@@ -11,6 +11,7 @@ const Comments = ({ postId,currentUser }) => {
 
   return (
     <div className={classes.comments_wrapper}>
+      {data?.comments?.length===0 && <div className={classes.no_comment}>No comment.</div>}
       {isLoading && <div className={classes.loading_comments}>
         <span>Loading comments</span>
         </div>}

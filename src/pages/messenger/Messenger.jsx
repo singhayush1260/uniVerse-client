@@ -24,6 +24,7 @@ const Messenger = () => {
     setLoadingChatHeads(true);
     socket?.emit("get-chat-heads", { userID: currentUser?._id });
     socket?.on("chat-heads-fetched", (data) => {
+      console.log("!!!!!!!!",data?.populatedChatHeads);
       const transformedChatHeads = data?.populatedChatHeads?.map((ch) => {
         const newMember = ch?.Members?.filter((m) => {
           return currentUser?._id !== m?._id;
@@ -33,7 +34,7 @@ const Messenger = () => {
       setChatHeads(transformedChatHeads);
       setLoadingChatHeads(false);
     });
-  }, []);
+  }, []); 
 
   useEffect(() => {
     socket?.emit("new-user-connected", {

@@ -12,7 +12,10 @@ const ChatHeads = ({ chatHeads, currentChat, setCurrentChat, isLoading, closeSid
 const[showModal,setShowModal]=useState(false);
 
 
+
   const ChatHeadItem = ({ chatHead }) => {
+   console.log("chatHead?.LastUpdation",chatHead?.LastUpdation)
+    const lastMessage=chatHead?.LastUpdation?.Message?.Attachments?.length>0 ? "Sent an image" : chatHead?.LastUpdation?.Message?.Message;
     const formattedDate = useMemo(() => {
       if (chatHead?.LastUpdation?.Message?.createdAt) {
         const date = new Date(chatHead?.LastUpdation?.Message?.createdAt);
@@ -35,10 +38,10 @@ const[showModal,setShowModal]=useState(false);
             <p>{chatHead?.Members[0]?.Name}</p>
             <p>{formattedDate}</p>
           </div>
-          <div style={{textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}}>{chatHead?.LastUpdation?.Message?.Message}</div>
+          <div style={{textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}}>{lastMessage}</div>
         </div>
       </div>
-    );
+    ); 
   };
 
   return (
